@@ -45,6 +45,10 @@ public class Frame {
         return "CorgiBot";
     }
 
+    public void erase(Position position) {
+        blocks[position.x][position.y] = null;
+    }
+
     public void drawBlock(Position position, Color color) {
         Block block = new Block(color);
         blocks[position.x][position.y] = block;

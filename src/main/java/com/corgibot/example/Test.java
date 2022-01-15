@@ -34,8 +34,8 @@ public class Test {
     private static void onFrame(Frame frame) {
         if (spaceCounter < frame.getSize()) {
             if (spacePressed) {
-                frame.drawBlock(spaceCounter, 0, "Item");
-                frame.drawBlock(0, spaceCounter, Color.BLACK);
+                frame.drawImage(new Position(spaceCounter, 0), "Item");
+                frame.drawImage(new Position(0, spaceCounter), Color.BLACK);
                 spacePressed = false;
                 spaceCounter++;
 
@@ -43,10 +43,10 @@ public class Test {
             }
         }
         if (clickedPosition != null) {
-            frame.drawBlock(clickedPosition.x, clickedPosition.y, "Wand");
+            frame.drawImage(clickedPosition, "Wand");
         }
 
-        frame.drawBlock(Mouse.getPosition().x, Mouse.getPosition().y, "Körper");
+        frame.drawImage(Mouse.getPosition(), "Körper");
 
         frame.drawText(String.valueOf(spaceCounter));
     }

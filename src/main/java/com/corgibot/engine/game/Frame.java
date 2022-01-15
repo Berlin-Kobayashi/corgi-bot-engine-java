@@ -45,14 +45,14 @@ public class Frame {
         return "CorgiBot";
     }
 
-    public void drawBlock(int x, int y, Color color) {
+    public void drawImage(Position position, Color color) {
         Block block = new Block(color);
-        blocks[x][y] = block;
+        blocks[position.x][position.y] = block;
     }
 
-    public void drawBlock(int x, int y, String imageName) {
+    public void drawImage(Position position, String imageName) {
         try {
-            blocks[x][y] = new Block(imageName);
+            blocks[position.x][position.y] = new Block(imageName);
         } catch (IOException e) {
             // TODO draw placeholder
             e.printStackTrace();
@@ -60,6 +60,7 @@ public class Frame {
     }
 
     public void drawText(String text) {
+        // TODO draw text as positioned image too
         this.text = text;
     }
 

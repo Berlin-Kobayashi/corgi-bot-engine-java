@@ -2,36 +2,30 @@ package com.corgibot.engine.game;
 
 public class GameConfig {
     private int blockSize;
-    private int screenSize;
-    private int frameRate;
+    private int frameSize;
+    private int frameDuration;
     private String name;
-    private String assetRoot;
 
-    public GameConfig(int blockSize, int screenSize, int frameRate, String name, String assetRoot) {
+    public GameConfig(int blockSize, int frameSize, int frameDuration, String name) {
         this.blockSize = blockSize;
-        this.screenSize = screenSize;
-        this.frameRate = frameRate;
+        this.frameSize = frameSize;
+        this.frameDuration = frameDuration;
         this.name = name;
-        this.assetRoot = assetRoot;
     }
 
     public int getBlockSize() {
         return blockSize;
     }
 
-    public int getScreenSize() {
-        return screenSize;
+    public int getFrameSize() {
+        return frameSize;
     }
 
-    public int getFrameRate() {
-        return frameRate;
+    public int getFrameDuration() {
+        return frameDuration;
     }
 
     public String getName() {
         return name;
-    }
-
-    public String getAssetRoot() {
-        return assetRoot;
     }
 }

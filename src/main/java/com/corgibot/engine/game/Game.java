@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 public class Game {
     public static GameConfig config;
-    public static GameState state;
+    private boolean isRunning;
     private final Frame frame;
     private Consumer<Frame> frameHandler;
 
@@ -16,7 +16,6 @@ public class Game {
 
     public Game(GameConfig config) {
         Game.config = config;
-        state = new GameState();
         this.frame = new Frame(config.getBlockSize(), config.getSize());
     }
 
@@ -25,20 +24,19 @@ public class Game {
     }
 
     public void start() {
-        state.setRunning();
+        isRunning = true;
 
-        while (state.isRunning()) {
+        while (isRunning) {
             if (frameHandler != null) {
                 frameHandler.accept(frame);
                 frame.draw();
 
-                state.incrementFrameCounter();
                 Time.sleep(config.getFrameDuration());
             }
         }
     }
 
     public void stop() {
-        state.setStopped();
+        isRunning = false;
     }
 }

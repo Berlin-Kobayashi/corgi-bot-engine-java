@@ -64,7 +64,7 @@ public class Frame {
         this.text = text;
     }
 
-    public void draw() {
+    void draw() {
         try {
             SwingUtilities.invokeAndWait(() -> frame.getContentPane().repaint());
         } catch (InterruptedException | InvocationTargetException e) {

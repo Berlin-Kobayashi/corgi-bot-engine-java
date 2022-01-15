@@ -195,7 +195,7 @@ public class Knyacki2 {
                     frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
                     world[columnCounter][rowCounter] = Field.WALL;
                 } else {
-                    frame.drawBlock(new Position(columnCounter, rowCounter), null);
+                    frame.erase(new Position(columnCounter, rowCounter));
                     world[columnCounter][rowCounter] = null;
                 }
             }

@@ -4,13 +4,11 @@ public class GameConfig {
     private int blockSize;
     private int size;
     private int frameDuration;
-    private String name;
 
-    public GameConfig(int blockSize, int size, int frameDuration, String name) {
+    public GameConfig(int blockSize, int size, int frameDuration) {
         this.blockSize = blockSize;
         this.size = size;
         this.frameDuration = frameDuration;
-        this.name = name;
     }
 
     public int getBlockSize() {
@@ -23,9 +21,5 @@ public class GameConfig {
 
     public int getFrameDuration() {
         return frameDuration;
-    }
-
-    public String getName() {
-        return name;
     }
 }

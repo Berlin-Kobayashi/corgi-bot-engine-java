@@ -45,7 +45,7 @@ public class Frame {
         return "CorgiBot";
     }
 
-    public void drawImage(Position position, Color color) {
+    public void drawBlock(Position position, Color color) {
         Block block = new Block(color);
         blocks[position.x][position.y] = block;
     }

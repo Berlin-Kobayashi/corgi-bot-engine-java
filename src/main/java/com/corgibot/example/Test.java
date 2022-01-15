@@ -35,7 +35,7 @@ public class Test {
         if (spaceCounter < frame.getSize()) {
             if (spacePressed) {
                 frame.drawImage(new Position(spaceCounter, 0), "Item");
-                frame.drawImage(new Position(0, spaceCounter), Color.BLACK);
+                frame.drawBlock(new Position(0, spaceCounter), Color.BLACK);
                 spacePressed = false;
                 spaceCounter++;
 

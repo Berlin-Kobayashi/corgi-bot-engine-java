@@ -99,6 +99,8 @@ public class Knyacki2 {
     private static void newGame(Frame frame) {
         Speaker.play("NewGame");
 
+        resetWorld(frame);
+
         body = new ArrayDeque<>();
         endCounter = 0;
         direction = Direction.UP;
@@ -183,6 +185,20 @@ public class Knyacki2 {
         if (world[x][y] == null) {
             frame.drawImage(new Position(x, y), "Item");
             world[x][y] = Field.ITEM;
+        }
+    }
+
+    private static void resetWorld(Frame frame) {
+        for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
+            for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
+                if (columnCounter == 0 || rowCounter == 0 || columnCounter == Game.config.getSize() - 1 || rowCounter == Game.config.getSize() - 1) {
+                    frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
+                    world[columnCounter][rowCounter] = Field.WALL;
+                } else {
+                    frame.drawBlock(new Position(columnCounter, rowCounter), null);
+                    world[columnCounter][rowCounter] = null;
+                }
+            }
         }
     }
 

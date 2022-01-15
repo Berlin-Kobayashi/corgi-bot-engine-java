@@ -1,12 +1,12 @@
 package com.corgibot.engine.game;
 
-import com.corgibot.engine.time.Time;
+import com.corgibot.utils.time.Time;
 
 import java.util.function.Consumer;
 
 public class Game {
-    private final GameConfig config;
-    private final GameState state;
+    public static GameConfig config;
+    public static GameState state;
     private final Frame frame;
     private Consumer<Frame> frameHandler;
 
@@ -15,9 +15,9 @@ public class Game {
     }
 
     public Game(GameConfig config) {
-        this.config = config;
-        this.state = new GameState();
-        this.frame = new Frame(config.getBlockSize(), config.getFrameSize());
+        Game.config = config;
+        state = new GameState();
+        this.frame = new Frame(config.getBlockSize(), config.getSize());
     }
 
     public void onFrame(Consumer<Frame> frameHandler) {

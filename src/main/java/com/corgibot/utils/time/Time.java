@@ -1,4 +1,4 @@
-package com.corgibot.engine.time;
+package com.corgibot.utils.time;
 
 import java.util.concurrent.TimeUnit;
 

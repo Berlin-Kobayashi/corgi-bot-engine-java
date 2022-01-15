@@ -2,13 +2,13 @@ package com.corgibot.engine.game;
 
 public class GameConfig {
     private int blockSize;
-    private int frameSize;
+    private int size;
     private int frameDuration;
     private String name;
 
-    public GameConfig(int blockSize, int frameSize, int frameDuration, String name) {
+    public GameConfig(int blockSize, int size, int frameDuration, String name) {
         this.blockSize = blockSize;
-        this.frameSize = frameSize;
+        this.size = size;
         this.frameDuration = frameDuration;
         this.name = name;
     }
@@ -17,8 +17,8 @@ public class GameConfig {
         return blockSize;
     }
 
-    public int getFrameSize() {
-        return frameSize;
+    public int getSize() {
+        return size;
     }
 
     public int getFrameDuration() {

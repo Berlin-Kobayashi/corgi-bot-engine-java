@@ -1,5 +1,8 @@
 package com.corgibot.engine.game;
 
+import com.corgibot.engine.control.Keyboard;
+import com.corgibot.engine.control.Mouse;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +26,7 @@ public class Frame {
     private int counter;
     private String text = "";
 
-    public Frame(int blockSize, int size){
+    public Frame(int blockSize, int size) {
         blocks = new Block[size][size];
         this.blockSize = blockSize;
         this.size = size;
@@ -69,23 +72,23 @@ public class Frame {
         counter++;
     }
 
-    public int getCounter(){
+    public int getCounter() {
         return counter;
     }
 
-    public int getSize(){
+    public int getSize() {
         return size;
     }
 
-    public int getBlockSize(){
+    public int getBlockSize() {
         return blockSize;
     }
 
     private void initialize() {
         if (canvas == null) {
             Canvas canvas = new Canvas();
-            frame.addKeyListener(new main.java.com.corgibot.engine.Steuerung.Tastatur.Listener());
-            canvas.addMouseListener(new main.java.com.corgibot.engine.Steuerung.Maus.Listener());
+            frame.addKeyListener(new Keyboard.Listener());
+            canvas.addMouseListener(new Mouse.Listener());
             frame.setMinimumSize(new Dimension(blockSize * size + 30, blockSize * size + 60));
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.getContentPane().add(canvas);

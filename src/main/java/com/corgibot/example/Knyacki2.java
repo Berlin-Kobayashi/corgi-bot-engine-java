@@ -13,31 +13,28 @@ import java.util.Queue;
 
 public class Knyacki2 {
     private static Position position;
-    private static Richtung richtung;
-    private static Queue<Position> schwanz;
-    private static int endeZähler;
-    private static int letzerEndeZählScore;
+    private static Direction direction;
+    private static Queue<Position> body;
+    private static int endCounter;
     private static int score;
 
-    private static boolean istGameOver = true;
+    private static boolean isGameOver = true;
     private static final Game game = new Game();
-    private static final Feld[][] felder = new Feld[Game.config.getSize()][Game.config.getSize()];
+    private static final Field[][] world = new Field[Game.config.getSize()][Game.config.getSize()];
 
-    private static boolean turnLeftPressed;
-    private static boolean turnRightPressed;
     private static boolean newGamePressed;
 
-    private enum Feld {
-        KOPF, KÖRPER, BAUEN, WAND
+    private enum Field {
+        HEAD, BODY, ITEM, WALL
     }
 
-    private enum Richtung {
-        RECHTS, LINKS, OBEN, UNTEN
+    private enum Direction {
+        RIGHT, LEFT, UP, DOWN
     }
 
     public static void main(String[] args) {
-        Keyboard.onKey(KeyEvent.VK_LEFT, Knyacki2::linksDrehen);
-        Keyboard.onKey(KeyEvent.VK_RIGHT, Knyacki2::rechtsDrehen);
+        Keyboard.onKey(KeyEvent.VK_LEFT, Knyacki2::turnLeft);
+        Keyboard.onKey(KeyEvent.VK_RIGHT, Knyacki2::turnRight);
         Keyboard.onKey(KeyEvent.VK_SPACE, Knyacki2::onNewGameKey);
 
         game.onFrame(Knyacki2::onFrame);
@@ -49,118 +46,117 @@ public class Knyacki2 {
     }
 
     private static void onFrame(Frame frame) {
-        if (!istGameOver) {
-            bewegen(frame);
-            bauen(frame);
+        if (!isGameOver) {
+            move(frame);
+            placeItem(frame);
             score++;
 
             if (score % 50 == 0) {
                 Speaker.play("Bauen");
-                int außenWandDicke = (score / 50) + 1;
-                for (int spaltenZähler = 0; spaltenZähler < Game.config.getSize(); spaltenZähler++) {
-                    for (int reihenZähler = 0; reihenZähler < Game.config.getSize(); reihenZähler++) {
-                        if (spaltenZähler < außenWandDicke || reihenZähler < außenWandDicke || spaltenZähler > Game.config.getSize() - außenWandDicke - 1 || reihenZähler > Game.config.getSize() - außenWandDicke - 1) {
-                            if (felder[spaltenZähler][reihenZähler] == Feld.KOPF) {
+                int outerWallThickness = (score / 50) + 1;
+                for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
+                    for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
+                        if (columnCounter < outerWallThickness || rowCounter < outerWallThickness || columnCounter > Game.config.getSize() - outerWallThickness - 1 || rowCounter > Game.config.getSize() - outerWallThickness - 1) {
+                            if (world[columnCounter][rowCounter] == Field.HEAD) {
                                 Speaker.play("GameOver", 6);
-                                istGameOver = true;
+                                isGameOver = true;
                             }
-                            felder[spaltenZähler][reihenZähler] = Feld.WAND;
-                            frame.drawImage(new Position(spaltenZähler, reihenZähler), "Wand");
+                            world[columnCounter][rowCounter] = Field.WALL;
+                            frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
                         }
                     }
                 }
             }
         } else {
             if (newGamePressed) {
-                neuesSpiel(frame);
+                newGame(frame);
             }
         }
 
         frame.drawText(String.valueOf(score));
     }
 
-    private static void linksDrehen() {
-        switch (richtung) {
-            case OBEN:
-                richtung = Richtung.LINKS;
+    private static void turnLeft() {
+        switch (direction) {
+            case UP:
+                direction = Direction.LEFT;
                 break;
-            case RECHTS:
-                richtung = Richtung.OBEN;
+            case RIGHT:
+                direction = Direction.UP;
                 break;
-            case UNTEN:
-                richtung = Richtung.RECHTS;
+            case DOWN:
+                direction = Direction.RIGHT;
                 break;
-            case LINKS:
-                richtung = Richtung.UNTEN;
-                break;
-        }
-    }
-
-    private static void rechtsDrehen() {
-        switch (richtung) {
-            case OBEN:
-                richtung = Richtung.RECHTS;
-                break;
-            case RECHTS:
-                richtung = Richtung.UNTEN;
-                break;
-            case UNTEN:
-                richtung = Richtung.LINKS;
-                break;
-            case LINKS:
-                richtung = Richtung.OBEN;
+            case LEFT:
+                direction = Direction.DOWN;
                 break;
         }
     }
 
-    private static void neuesSpiel(Frame frame) {
+    private static void turnRight() {
+        switch (direction) {
+            case UP:
+                direction = Direction.RIGHT;
+                break;
+            case RIGHT:
+                direction = Direction.DOWN;
+                break;
+            case DOWN:
+                direction = Direction.LEFT;
+                break;
+            case LEFT:
+                direction = Direction.UP;
+                break;
+        }
+    }
+
+    private static void newGame(Frame frame) {
             Speaker.play("NewGame");
-            for (int spaltenZähler = 0; spaltenZähler < Game.config.getSize(); spaltenZähler++) {
-                for (int reihenZähler = 0; reihenZähler < Game.config.getSize(); reihenZähler++) {
-                    if (spaltenZähler == 0 || reihenZähler == 0 || spaltenZähler == Game.config.getSize() - 1 || reihenZähler == Game.config.getSize() - 1) {
-                        frame.drawImage(new Position(spaltenZähler, reihenZähler), "Wand");
-                        felder[spaltenZähler][reihenZähler] = Feld.WAND;
+            for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
+                for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
+                    if (columnCounter == 0 || rowCounter == 0 || columnCounter == Game.config.getSize() - 1 || rowCounter == Game.config.getSize() - 1) {
+                        frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
+                        world[columnCounter][rowCounter] = Field.WALL;
                     } else {
-                        frame.drawBlock(new Position(spaltenZähler, reihenZähler), null);
-                        felder[spaltenZähler][reihenZähler] = null;
+                        frame.drawBlock(new Position(columnCounter, rowCounter), null);
+                        world[columnCounter][rowCounter] = null;
                     }
                 }
             }
 
-            schwanz = new ArrayDeque<>();
-            endeZähler = 0;
-            letzerEndeZählScore = 0;
-            richtung = Richtung.OBEN;
+            body = new ArrayDeque<>();
+            endCounter = 0;
+            direction = Direction.UP;
             position = new Position(Game.config.getSize() / 2, Game.config.getSize() / 2);
             score = 0;
-            istGameOver = false;
+            isGameOver = false;
             newGamePressed = false;
     }
 
-    private static void bewegen(Frame frame) {
-        int neuePosX = position.x;
-        int neuePosY = position.y;
+    private static void move(Frame frame) {
+        int newPosX = position.x;
+        int newPosY = position.y;
 
-        switch (richtung) {
-            case OBEN:
-                neuePosY--;
+        switch (direction) {
+            case UP:
+                newPosY--;
                 break;
-            case RECHTS:
-                neuePosX++;
+            case RIGHT:
+                newPosX++;
                 break;
-            case UNTEN:
-                neuePosY++;
+            case DOWN:
+                newPosY++;
                 break;
-            case LINKS:
-                neuePosX--;
+            case LEFT:
+                newPosX--;
                 break;
         }
 
-        if ((neuePosX < 0 || neuePosX >= Game.config.getSize() || neuePosY < 0 || neuePosY >= Game.config.getSize()) ||
-                felder[neuePosX][neuePosY] == Feld.KÖRPER || felder[neuePosX][neuePosY] == Feld.WAND) {
-            if (score - letzerEndeZählScore > 10) {
-                endeZähler++;
-                switch (endeZähler) {
+        if ((newPosX < 0 || newPosX >= Game.config.getSize() || newPosY < 0 || newPosY >= Game.config.getSize()) ||
+                world[newPosX][newPosY] == Field.BODY || world[newPosX][newPosY] == Field.WALL) {
+            if (score % 10 == 0) {
+                endCounter++;
+                switch (endCounter) {
                     case 1:
                         Speaker.play("Ichi", 6);
                         break;
@@ -172,48 +168,46 @@ public class Knyacki2 {
                         break;
                     case 4:
                         Speaker.play("GameOver", 6);
-                        istGameOver = true;
+                        isGameOver = true;
 
                 }
-                letzerEndeZählScore = score;
             }
 
             return;
         } else {
-            letzerEndeZählScore = 0;
-            endeZähler = 0;
+            endCounter = 0;
         }
 
-        if (felder[neuePosX][neuePosY] == Feld.BAUEN) {
-            for (int zähler = 0; zähler < 10 && schwanz.size() > 0; zähler++) {
-                Position schwanzSpitze = schwanz.poll();
-                if (felder[schwanzSpitze.x][schwanzSpitze.y] == Feld.KÖRPER) {
-                    frame.drawBlock(schwanzSpitze, null);
+        if (world[newPosX][newPosY] == Field.ITEM) {
+            for (int counter = 0; counter < 10 && body.size() > 0; counter++) {
+                Position tail = body.poll();
+                if (world[tail.x][tail.y] == Field.BODY) {
+                    frame.drawBlock(tail, null);
                 }
-                felder[schwanzSpitze.x][schwanzSpitze.y] = null;
+                world[tail.x][tail.y] = null;
             }
 
             Speaker.play("KnyackiChan");
         }
 
-        if ((felder[neuePosX][neuePosY] == null || felder[neuePosX][neuePosY] == Feld.BAUEN)) {
+        if ((world[newPosX][newPosY] == null || world[newPosX][newPosY] == Field.ITEM)) {
             frame.drawImage(position, "Körper");
-            felder[position.x][position.y] = Feld.KÖRPER;
-            schwanz.add(new Position(position.x, position.y));
+            world[position.x][position.y] = Field.BODY;
+            body.add(new Position(position.x, position.y));
 
-            position.x = neuePosX;
-            position.y = neuePosY;
+            position.x = newPosX;
+            position.y = newPosY;
             frame.drawImage(position, "Kopf");
-            felder[position.x][position.y] = Feld.KOPF;
+            world[position.x][position.y] = Field.HEAD;
         }
     }
 
-    private static void bauen(Frame frame) {
+    private static void placeItem(Frame frame) {
         int x = Math.random(0, Game.config.getSize() - 1);
         int y = Math.random(0, Game.config.getSize() - 1);
-        if (felder[x][y] == null) {
+        if (world[x][y] == null) {
             frame.drawImage(new Position(x, y), "Item");
-            felder[x][y] = Feld.BAUEN;
+            world[x][y] = Field.ITEM;
         }
     }
 }

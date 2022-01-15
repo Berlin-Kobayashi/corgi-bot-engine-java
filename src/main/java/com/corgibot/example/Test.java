@@ -32,7 +32,7 @@ public class Test {
     }
 
     private static void onFrame(Frame frame) {
-        if (spaceCounter < frame.getSize()) {
+        if (spaceCounter < Game.config.getSize()) {
             if (spacePressed) {
                 frame.drawImage(new Position(spaceCounter, 0), "Item");
                 frame.drawBlock(new Position(0, spaceCounter), Color.BLACK);

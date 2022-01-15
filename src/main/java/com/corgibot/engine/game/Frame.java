@@ -81,14 +81,6 @@ public class Frame {
         return counter;
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    public int getBlockSize() {
-        return blockSize;
-    }
-
     private void initialize() {
         if (canvas == null) {
             Canvas canvas = new Canvas();

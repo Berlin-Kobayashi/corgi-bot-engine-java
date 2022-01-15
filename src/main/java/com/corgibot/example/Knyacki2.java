@@ -46,31 +46,17 @@ public class Knyacki2 {
     }
 
     private static void onFrame(Frame frame) {
-        if (!isGameOver) {
-            move(frame);
-            placeItem(frame);
-            score++;
-
-            if (score % 50 == 0) {
-                Speaker.play("Bauen");
-                int outerWallThickness = (score / 50) + 1;
-                for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
-                    for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
-                        if (columnCounter < outerWallThickness || rowCounter < outerWallThickness || columnCounter > Game.config.getSize() - outerWallThickness - 1 || rowCounter > Game.config.getSize() - outerWallThickness - 1) {
-                            if (world[columnCounter][rowCounter] == Field.HEAD) {
-                                Speaker.play("GameOver", 6);
-                                isGameOver = true;
-                            }
-                            world[columnCounter][rowCounter] = Field.WALL;
-                            frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
-                        }
-                    }
-                }
-            }
-        } else {
+        if (isGameOver) {
             if (newGamePressed) {
                 newGame(frame);
             }
+        } else {
+            move(frame);
+            placeItem(frame);
+            if (score % 50 == 0) {
+                expandWall(frame);
+            }
+            score++;
         }
 
         frame.drawText(String.valueOf(score));
@@ -111,26 +97,26 @@ public class Knyacki2 {
     }
 
     private static void newGame(Frame frame) {
-            Speaker.play("NewGame");
-            for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
-                for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
-                    if (columnCounter == 0 || rowCounter == 0 || columnCounter == Game.config.getSize() - 1 || rowCounter == Game.config.getSize() - 1) {
-                        frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
-                        world[columnCounter][rowCounter] = Field.WALL;
-                    } else {
-                        frame.drawBlock(new Position(columnCounter, rowCounter), null);
-                        world[columnCounter][rowCounter] = null;
-                    }
+        Speaker.play("NewGame");
+        for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
+            for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
+                if (columnCounter == 0 || rowCounter == 0 || columnCounter == Game.config.getSize() - 1 || rowCounter == Game.config.getSize() - 1) {
+                    frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
+                    world[columnCounter][rowCounter] = Field.WALL;
+                } else {
+                    frame.drawBlock(new Position(columnCounter, rowCounter), null);
+                    world[columnCounter][rowCounter] = null;
                 }
             }
+        }
 
-            body = new ArrayDeque<>();
-            endCounter = 0;
-            direction = Direction.UP;
-            position = new Position(Game.config.getSize() / 2, Game.config.getSize() / 2);
-            score = 0;
-            isGameOver = false;
-            newGamePressed = false;
+        body = new ArrayDeque<>();
+        endCounter = 0;
+        direction = Direction.UP;
+        position = new Position(Game.config.getSize() / 2, Game.config.getSize() / 2);
+        score = 0;
+        isGameOver = false;
+        newGamePressed = false;
     }
 
     private static void move(Frame frame) {
@@ -208,6 +194,23 @@ public class Knyacki2 {
         if (world[x][y] == null) {
             frame.drawImage(new Position(x, y), "Item");
             world[x][y] = Field.ITEM;
+        }
+    }
+
+    private static void expandWall(Frame frame) {
+        Speaker.play("Bauen");
+        int outerWallThickness = (score / 50) + 1;
+        for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
+            for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
+                if (columnCounter < outerWallThickness || rowCounter < outerWallThickness || columnCounter > Game.config.getSize() - outerWallThickness - 1 || rowCounter > Game.config.getSize() - outerWallThickness - 1) {
+                    if (world[columnCounter][rowCounter] == Field.HEAD) {
+                        Speaker.play("GameOver", 6);
+                        isGameOver = true;
+                    }
+                    world[columnCounter][rowCounter] = Field.WALL;
+                    frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
+                }
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package Werkzeug.Grafik;
+package main.java.com.corgibot.engine.Grafik;
 
 import java.awt.*;
 

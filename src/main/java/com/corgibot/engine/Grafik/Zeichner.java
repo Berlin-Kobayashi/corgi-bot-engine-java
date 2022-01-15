@@ -1,7 +1,7 @@
-package Werkzeug.Grafik;
+package main.java.com.corgibot.engine.Grafik;
 
-import Werkzeug.Steuerung.Maus;
-import Werkzeug.Steuerung.Tastatur;
+import main.java.com.corgibot.engine.Steuerung.Maus;
+import main.java.com.corgibot.engine.Steuerung.Tastatur;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

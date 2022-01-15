@@ -1,7 +1,7 @@
-package Werkzeug.Steuerung;
+package main.java.com.corgibot.engine.Steuerung;
 
-import Werkzeug.Grafik.Position;
-import Werkzeug.Grafik.Zeichner;
+import main.java.com.corgibot.engine.Grafik.Position;
+import main.java.com.corgibot.engine.Grafik.Zeichner;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

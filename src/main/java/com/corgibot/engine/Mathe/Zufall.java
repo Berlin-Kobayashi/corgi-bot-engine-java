@@ -1,4 +1,4 @@
-package Werkzeug.Mathe;
+package main.java.com.corgibot.engine.Mathe;
 
 import java.util.concurrent.ThreadLocalRandom;
 

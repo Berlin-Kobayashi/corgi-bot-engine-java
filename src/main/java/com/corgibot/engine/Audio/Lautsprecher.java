@@ -1,4 +1,4 @@
-package Werkzeug.Audio;
+package main.java.com.corgibot.engine.Audio;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;

@@ -1,12 +1,12 @@
-package Beispiel;
+package com.corgibot.example;
 
-import Werkzeug.Audio.Lautsprecher;
-import Werkzeug.Grafik.Position;
-import Werkzeug.Steuerung.Tastatur;
-import Werkzeug.Steuerung.Taste;
-import Werkzeug.Grafik.Zeichner;
-import Werkzeug.Zeit.Zeit;
-import Werkzeug.Mathe.Zufall;
+import main.java.com.corgibot.engine.Audio.Lautsprecher;
+import main.java.com.corgibot.engine.Grafik.Position;
+import main.java.com.corgibot.engine.Steuerung.Tastatur;
+import main.java.com.corgibot.engine.Steuerung.Taste;
+import main.java.com.corgibot.engine.Grafik.Zeichner;
+import main.java.com.corgibot.engine.Zeit.Zeit;
+import main.java.com.corgibot.engine.Mathe.Zufall;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

@@ -1,4 +1,4 @@
-package Werkzeug.Steuerung;
+package main.java.com.corgibot.engine.Steuerung;
 
 import java.awt.event.KeyEvent;
 

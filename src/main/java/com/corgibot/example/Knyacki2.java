@@ -168,6 +168,7 @@ public class Knyacki2 {
         }
 
         if ((world[newPosX][newPosY] == null || world[newPosX][newPosY] == Field.ITEM)) {
+            frame.erase(position);
             frame.drawImage(position, "Körper");
             world[position.x][position.y] = Field.BODY;
             body.add(new Position(position.x, position.y));

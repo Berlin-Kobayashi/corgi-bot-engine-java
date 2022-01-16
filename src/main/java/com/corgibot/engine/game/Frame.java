@@ -46,17 +46,22 @@ public class Frame {
     }
 
     public void erase(Position position) {
-        actions.add(g -> g.clearRect(position.x * blockSize, position.y * blockSize, blockSize, blockSize));
+        Position finalPosition = position.clone();
+        actions.add(g -> g.clearRect(finalPosition.x * blockSize, finalPosition.y * blockSize, blockSize, blockSize));
     }
 
     public void drawBlock(Position position, Color color) {
+        Position finalPosition = position.clone();
+
         actions.add(g -> {
             g.setColor(color);
-            g.fillRect(position.x * blockSize, position.y * blockSize, blockSize, blockSize);
+            g.fillRect(finalPosition.x * blockSize, finalPosition.y * blockSize, blockSize, blockSize);
         });
     }
 
     public void drawImage(Position position, String imageName) {
+        Position finalPosition = position.clone();
+
         actions.add(g -> {
             try {
                 Image image;
@@ -68,7 +73,7 @@ public class Frame {
 
                     graphics.put(imageName, image);
                 }
-                g.drawImage(image, position.x * blockSize, position.y * blockSize, null);
+                g.drawImage(image, finalPosition.x * blockSize, finalPosition.y * blockSize, null);
             } catch (IOException e) {
                 // TODO draw placeholder
                 e.printStackTrace();

@@ -10,16 +10,16 @@ import com.corgibot.engine.game.Position;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class Test {
+public class Demo {
     private static Position clickedPosition;
     private static boolean spacePressed = false;
     private static int spaceCounter = 0;
 
     public static void main(String[] args) {
         Game game = new Game();
-        Keyboard.onKey(KeyEvent.VK_SPACE, Test::onSpace);
-        Mouse.onClick(Test::onClick);
-        game.onFrame(Test::onFrame);
+        Keyboard.onKey(KeyEvent.VK_SPACE, Demo::onSpace);
+        Mouse.onClick(Demo::onClick);
+        game.onFrame(Demo::onFrame);
         game.start();
     }
 
@@ -32,7 +32,7 @@ public class Test {
     }
 
     private static void onFrame(Frame frame) {
-        if (spaceCounter < Game.config.getSize()) {
+        if (spaceCounter < Game.config.getSize()  ) {
             if (spacePressed) {
                 frame.drawImage(new Position(spaceCounter, 0), "Item");
                 frame.drawBlock(new Position(0, spaceCounter), Color.BLACK);

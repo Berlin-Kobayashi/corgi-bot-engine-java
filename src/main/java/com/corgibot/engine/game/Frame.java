@@ -116,6 +116,7 @@ public class Frame {
     private class Canvas extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
+            // TODO buffer next frame
             g.setColor(Color.black);
             g.drawString(text, size * blockSize, 30);
 

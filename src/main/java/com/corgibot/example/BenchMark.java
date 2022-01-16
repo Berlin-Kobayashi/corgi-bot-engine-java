@@ -11,7 +11,7 @@ import java.awt.*;
 public class BenchMark {
 
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig(16, 40, 13));
+        Game game = new Game(new GameConfig(1, 640, 13));
         game.onFrame(BenchMark::onFrame);
         game.start();
     }

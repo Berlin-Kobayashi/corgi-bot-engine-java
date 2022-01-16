@@ -33,7 +33,7 @@ public class Demo {
     }
 
     private static void onFrame(Frame frame) {
-        if (spaceCounter < Game.config.getSize()  ) {
+        if (spaceCounter < Game.config.getSize()) {
             if (spacePressed) {
                 frame.drawImage(new Position(spaceCounter, 0), "Item");
                 frame.drawBlock(new Position(0, spaceCounter), Color.BLACK);
@@ -49,6 +49,6 @@ public class Demo {
 
         frame.drawImage(Mouse.getPosition(), "Körper");
 
-        frame.drawText(String.valueOf(spaceCounter));
+        frame.drawText("Space pressed: " + spaceCounter);
     }
 }

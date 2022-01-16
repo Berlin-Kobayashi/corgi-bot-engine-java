@@ -16,6 +16,8 @@ import java.util.Queue;
 import java.util.function.Consumer;
 
 public class Frame {
+    private static final int MARGIN_TOP = 20;
+    private static final Color HEADER_COLOR = new Color(230, 159, 20);
     //TODO move out everything static
     private static final Queue<Consumer<Graphics>> actions = new ArrayDeque<>();
     private static final Map<String, Image> graphics = new HashMap<>();
@@ -36,21 +38,21 @@ public class Frame {
     }
 
     public void erase(Position position) {
-        Position finalPosition = position.clone();
-        actions.add(g -> g.clearRect(finalPosition.x * blockSize, finalPosition.y * blockSize, blockSize, blockSize));
+        Position pixelPosition = getPixelPosition(position);
+        actions.add(g -> g.clearRect(pixelPosition.x, pixelPosition.y, blockSize, blockSize));
     }
 
     public void drawBlock(Position position, Color color) {
-        Position finalPosition = position.clone();
+        Position pixelPosition = getPixelPosition(position);
 
         actions.add(g -> {
             g.setColor(color);
-            g.fillRect(finalPosition.x * blockSize, finalPosition.y * blockSize, blockSize, blockSize);
+            g.fillRect(pixelPosition.x, pixelPosition.y, blockSize, blockSize);
         });
     }
 
     public void drawImage(Position position, String imageName) {
-        Position finalPosition = position.clone();
+        Position pixelPosition = getPixelPosition(position);
 
         actions.add(g -> {
             try {
@@ -63,7 +65,7 @@ public class Frame {
 
                     graphics.put(imageName, image);
                 }
-                g.drawImage(image, finalPosition.x * blockSize, finalPosition.y * blockSize, null);
+                g.drawImage(image, pixelPosition.x, pixelPosition.y, null);
             } catch (IOException e) {
                 // TODO draw placeholder
                 e.printStackTrace();
@@ -74,6 +76,10 @@ public class Frame {
     public void drawText(String text) {
         // TODO draw text as positioned image too
         this.text = text;
+    }
+
+    private Position getPixelPosition(Position blockPosition) {
+        return new Position(blockPosition.x * blockSize, blockPosition.y * blockSize + MARGIN_TOP);
     }
 
     void draw() {
@@ -94,7 +100,7 @@ public class Frame {
             Canvas canvas = new Canvas();
             frame.addKeyListener(new Keyboard.Listener());
             canvas.addMouseListener(new Mouse.Listener());
-            frame.setMinimumSize(new Dimension(blockSize * size + 30, blockSize * size + 60));
+            frame.setMinimumSize(new Dimension(blockSize * size, blockSize * size + 48));
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.getContentPane().add(canvas);
             frame.setVisible(true);
@@ -107,8 +113,10 @@ public class Frame {
         @Override
         protected void paintComponent(Graphics g) {
             // TODO buffer next frame
+            g.setColor(HEADER_COLOR);
+            g.fillRect(0, 0, blockSize * size, MARGIN_TOP);
             g.setColor(Color.black);
-            g.drawString(text, size * blockSize, 30);
+            g.drawString(text, 0, (int) (MARGIN_TOP / 1.5));
 
             while (actions.size() > 0) {
                 Consumer<Graphics> action = actions.remove();

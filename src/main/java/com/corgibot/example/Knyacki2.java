@@ -60,7 +60,7 @@ public class Knyacki2 {
             score++;
         }
 
-        frame.drawText(String.valueOf(score));
+        frame.drawText("Score:" + score);
     }
 
     private static void turnLeft() {

@@ -122,6 +122,8 @@ public class Frame {
                 Consumer<Graphics> action = actions.remove();
                 action.accept(g);
             }
+
+            g.dispose();
         }
     }
 }

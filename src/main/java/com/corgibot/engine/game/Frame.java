@@ -112,16 +112,21 @@ public class Frame {
     private class Canvas extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
+            Image next = createImage(size * blockSize, size * blockSize);
+            Graphics nextGraphics = next.getGraphics();
+
             // TODO buffer next frame
-            g.setColor(HEADER_COLOR);
-            g.fillRect(0, 0, blockSize * size, MARGIN_TOP);
-            g.setColor(Color.black);
-            g.drawString(text, 0, (int) (MARGIN_TOP / 1.5));
+            nextGraphics.setColor(HEADER_COLOR);
+            nextGraphics.fillRect(0, 0, blockSize * size, MARGIN_TOP);
+            nextGraphics.setColor(Color.black);
+            nextGraphics.drawString(text, 0, (int) (MARGIN_TOP / 1.5));
 
             while (actions.size() > 0) {
                 Consumer<Graphics> action = actions.remove();
-                action.accept(g);
+                action.accept(nextGraphics);
             }
+
+            g.drawImage(next, 0, 0, null);
         }
     }
 }

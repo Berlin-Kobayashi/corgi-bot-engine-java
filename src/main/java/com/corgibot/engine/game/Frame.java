@@ -15,8 +15,8 @@ import java.util.Map;
 
 public class Frame {
     //TODO move out everything static
-    private static final Map<Color, BufferedImage> pixels = new HashMap<>();
-    private static final Map<String, BufferedImage> graphics = new HashMap<>();
+    private static final Map<Color, Image> pixels = new HashMap<>();
+    private static final Map<String, Image> graphics = new HashMap<>();
     Canvas canvas = null;
     public static final JFrame frame = new JFrame(getMainClassName());
 
@@ -46,17 +46,18 @@ public class Frame {
     }
 
     public void erase(Position position) {
-        blocks[position.x][position.y] = null;
+        putBlock(position, null);
     }
 
     public void drawBlock(Position position, Color color) {
         Block block = new Block(color);
-        blocks[position.x][position.y] = block;
+        putBlock(position, block);
     }
 
     public void drawImage(Position position, String imageName) {
         try {
-            blocks[position.x][position.y] = new Block(imageName);
+            Block block = new Block(imageName);
+            putBlock(position, block);
         } catch (IOException e) {
             // TODO draw placeholder
             e.printStackTrace();
@@ -66,6 +67,10 @@ public class Frame {
     public void drawText(String text) {
         // TODO draw text as positioned image too
         this.text = text;
+    }
+
+    private void putBlock(Position position, Block block) {
+        blocks[position.x][position.y] = block;
     }
 
     void draw() {
@@ -96,7 +101,7 @@ public class Frame {
     }
 
     private class Block {
-        public BufferedImage image;
+        public Image image;
 
         public Block(String imageName) throws IOException {
             if (graphics.containsKey(imageName)) {

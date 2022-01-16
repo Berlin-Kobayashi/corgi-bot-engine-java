@@ -17,7 +17,7 @@ public class Demo {
     private static int spaceCounter = 0;
 
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig(16, 40, 13));
+        Game game = new Game(new GameConfig("Technical Demo", 16, 40, 13));
         Keyboard.onKey(KeyEvent.VK_SPACE, Demo::onSpace);
         Mouse.onClick(Demo::onClick);
         game.onFrame(Demo::onFrame);

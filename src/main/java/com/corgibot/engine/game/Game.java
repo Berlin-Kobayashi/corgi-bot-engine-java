@@ -16,7 +16,7 @@ public class Game {
     private Consumer<Frame> frameHandler;
 
     public Game() {
-        this(new GameConfig(16, 40, 100));
+        this(new GameConfig("CorgiBot", 16, 40, 100));
     }
 
     public Game(GameConfig config) {

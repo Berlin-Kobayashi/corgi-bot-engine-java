@@ -20,7 +20,7 @@ public class Frame {
     private static final Queue<Consumer<Graphics>> actions = new ArrayDeque<>();
     private static final Map<String, Image> graphics = new HashMap<>();
     Canvas canvas = null;
-    public static final JFrame frame = new JFrame(getMainClassName());
+    public static final JFrame frame = new JFrame(Game.config.getName());
 
     private final int blockSize;
     private final int size;
@@ -33,16 +33,6 @@ public class Frame {
         this.counter = 0;
 
         initialize();
-    }
-
-
-    private static String getMainClassName() {
-        StackTraceElement trace[] = Thread.currentThread().getStackTrace();
-        if (trace.length > 0) {
-            return trace[trace.length - 1].getClassName();
-        }
-
-        return "CorgiBot";
     }
 
     public void erase(Position position) {

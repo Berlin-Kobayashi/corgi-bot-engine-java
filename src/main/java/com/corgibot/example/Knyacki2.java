@@ -4,6 +4,7 @@ import com.corgibot.engine.audio.Speaker;
 import com.corgibot.engine.control.Keyboard;
 import com.corgibot.engine.game.Frame;
 import com.corgibot.engine.game.Game;
+import com.corgibot.engine.game.GameConfig;
 import com.corgibot.engine.game.Position;
 import com.corgibot.utils.random.Random;
 
@@ -19,7 +20,7 @@ public class Knyacki2 {
     private static int score;
 
     private static boolean isGameOver = true;
-    private static final Game game = new Game();
+    private static final Game game = new Game(new GameConfig("Knyacki!", 16, 40, 100));
     private static final Field[][] world = new Field[Game.config.getSize()][Game.config.getSize()];
 
     private static boolean newGamePressed;

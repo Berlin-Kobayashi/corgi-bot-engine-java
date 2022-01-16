@@ -49,6 +49,6 @@ public class Demo {
 
         frame.drawImage(Mouse.getPosition(), "Körper");
 
-        frame.drawText("Space pressed: " + spaceCounter);
+        frame.drawHead("Space pressed: " + spaceCounter);
     }
 }

@@ -73,7 +73,7 @@ public class Frame {
         });
     }
 
-    public void drawText(String text) {
+    public void drawHead(String text) {
         // TODO draw text as positioned image too
         this.text = text;
     }

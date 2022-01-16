@@ -8,12 +8,14 @@ import com.corgibot.utils.random.Random;
 
 public class Benchmark {
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig("Benchmark",1, 640, 13));
+        Game game = new Game(new GameConfig("Benchmark", 1, 640, 13));
         game.onFrame(Benchmark::onFrame);
         game.start();
     }
 
     private static void onFrame(Frame frame) {
+        frame.drawHead(String.format("Pixels: %,d; Colors: %,d", Game.config.getSize() * Game.config.getSize(), 256 * 256 * 256));
+
         for (int i = 0; i < Game.config.getSize(); i++) {
             for (int j = 0; j < Game.config.getSize(); j++) {
                 Position pos = new Position(i, j);

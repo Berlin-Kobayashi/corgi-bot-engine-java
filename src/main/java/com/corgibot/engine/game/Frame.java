@@ -83,7 +83,7 @@ public class Frame {
 
     void draw() {
         try {
-            SwingUtilities.invokeAndWait(() -> frame.getContentPane().repaint());
+            SwingUtilities.invokeAndWait(() -> canvas.paint(canvas.getGraphics()));
         } catch (InterruptedException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -111,8 +111,6 @@ public class Frame {
     private class Canvas extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-
             g.setColor(Color.black);
             g.drawString(text, size * blockSize, 30);
 

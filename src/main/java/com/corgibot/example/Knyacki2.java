@@ -98,7 +98,7 @@ public class Knyacki2 {
     }
 
     private static void newGame(Frame frame) {
-        Speaker.play("NewGame");
+        Speaker.play("Knyacki/NewGame");
 
         resetWorld(frame);
 
@@ -136,16 +136,16 @@ public class Knyacki2 {
                 endCounter++;
                 switch (endCounter) {
                     case 1:
-                        Speaker.play("Ichi", 6);
+                        Speaker.play("Knyacki/Ichi", 6);
                         break;
                     case 2:
-                        Speaker.play("Ni", 6);
+                        Speaker.play("Knyacki/Ni", 6);
                         break;
                     case 3:
-                        Speaker.play("San", 6);
+                        Speaker.play("Knyacki/San", 6);
                         break;
                     case 4:
-                        Speaker.play("GameOver", 6);
+                        Speaker.play("Knyacki/GameOver", 6);
                         isGameOver = true;
 
                 }
@@ -165,18 +165,18 @@ public class Knyacki2 {
                 world[tail.x][tail.y] = null;
             }
 
-            Speaker.play("KnyackiChan");
+            Speaker.play("Knyacki/KnyackiChan");
         }
 
         if ((world[newPosX][newPosY] == null || world[newPosX][newPosY] == Field.ITEM)) {
             frame.erase(position);
-            frame.drawImage(position, "Körper");
+            frame.drawImage(position, "Knyacki/Körper");
             world[position.x][position.y] = Field.BODY;
             body.add(new Position(position.x, position.y));
 
             position.x = newPosX;
             position.y = newPosY;
-            frame.drawImage(position, "Kopf");
+            frame.drawImage(position, "Knyacki/Kopf");
             world[position.x][position.y] = Field.HEAD;
         }
     }
@@ -185,7 +185,7 @@ public class Knyacki2 {
         int x = Random.number(0, Game.config.getSize() - 1);
         int y = Random.number(0, Game.config.getSize() - 1);
         if (world[x][y] == null) {
-            frame.drawImage(new Position(x, y), "Item");
+            frame.drawImage(new Position(x, y), "Knyacki/Item");
             world[x][y] = Field.ITEM;
         }
     }
@@ -194,7 +194,7 @@ public class Knyacki2 {
         for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
             for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
                 if (columnCounter == 0 || rowCounter == 0 || columnCounter == Game.config.getSize() - 1 || rowCounter == Game.config.getSize() - 1) {
-                    frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
+                    frame.drawImage(new Position(columnCounter, rowCounter), "Knyacki/Wand");
                     world[columnCounter][rowCounter] = Field.WALL;
                 } else {
                     frame.erase(new Position(columnCounter, rowCounter));
@@ -205,17 +205,17 @@ public class Knyacki2 {
     }
 
     private static void expandWall(Frame frame) {
-        Speaker.play("Bauen");
+        Speaker.play("Knyacki/Bauen");
         int outerWallThickness = (score / 50) + 1;
         for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
             for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
                 if (columnCounter < outerWallThickness || rowCounter < outerWallThickness || columnCounter > Game.config.getSize() - outerWallThickness - 1 || rowCounter > Game.config.getSize() - outerWallThickness - 1) {
                     if (world[columnCounter][rowCounter] == Field.HEAD) {
-                        Speaker.play("GameOver", 6);
+                        Speaker.play("Knyacki/GameOver", 6);
                         isGameOver = true;
                     }
                     world[columnCounter][rowCounter] = Field.WALL;
-                    frame.drawImage(new Position(columnCounter, rowCounter), "Wand");
+                    frame.drawImage(new Position(columnCounter, rowCounter), "Knyacki/Wand");
                 }
             }
         }

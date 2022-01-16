@@ -42,7 +42,7 @@ public class Game {
                     lastDraw = Instant.now();
 
                     if (delay > 0) {
-                        System.out.println("Frame delay of: " + delay + " ms");
+                        System.err.println("Frame delay of: " + delay + " ms");
                     }
                 }
             }

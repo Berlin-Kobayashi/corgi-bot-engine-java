@@ -5,7 +5,7 @@ import com.corgibot.engine.control.Keyboard;
 import com.corgibot.engine.game.Frame;
 import com.corgibot.engine.game.Game;
 import com.corgibot.engine.game.Position;
-import com.corgibot.utils.math.Math;
+import com.corgibot.utils.random.Random;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
@@ -180,8 +180,8 @@ public class Knyacki2 {
     }
 
     private static void placeItem(Frame frame) {
-        int x = Math.random(0, Game.config.getSize() - 1);
-        int y = Math.random(0, Game.config.getSize() - 1);
+        int x = Random.number(0, Game.config.getSize() - 1);
+        int y = Random.number(0, Game.config.getSize() - 1);
         if (world[x][y] == null) {
             frame.drawImage(new Position(x, y), "Item");
             world[x][y] = Field.ITEM;

@@ -6,28 +6,28 @@ import com.corgibot.engine.control.Mouse;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.function.Consumer;
 
 public class Frame {
     //TODO move out everything static
-    private static final Map<Color, Image> pixels = new HashMap<>();
+    private static final Queue<Consumer<Graphics>> actions = new ArrayDeque<>();
     private static final Map<String, Image> graphics = new HashMap<>();
     Canvas canvas = null;
     public static final JFrame frame = new JFrame(getMainClassName());
 
-    private final Block[][] blocks;
     private final int blockSize;
     private final int size;
     private int counter;
     private String text = "";
 
     public Frame(int blockSize, int size) {
-        blocks = new Block[size][size];
         this.blockSize = blockSize;
         this.size = size;
         this.counter = 0;
@@ -46,31 +46,39 @@ public class Frame {
     }
 
     public void erase(Position position) {
-        putBlock(position, null);
+        actions.add(g -> g.clearRect(position.x * blockSize, position.y * blockSize, blockSize, blockSize));
     }
 
     public void drawBlock(Position position, Color color) {
-        Block block = new Block(color);
-        putBlock(position, block);
+        actions.add(g -> {
+            g.setColor(color);
+            g.fillRect(position.x * blockSize, position.y * blockSize, blockSize, blockSize);
+        });
     }
 
     public void drawImage(Position position, String imageName) {
-        try {
-            Block block = new Block(imageName);
-            putBlock(position, block);
-        } catch (IOException e) {
-            // TODO draw placeholder
-            e.printStackTrace();
-        }
+        actions.add(g -> {
+            try {
+                Image image;
+                if (graphics.containsKey(imageName)) {
+                    image = graphics.get(imageName);
+                } else {
+                    String path = System.getProperty("user.dir") + "/assets/graphics/" + imageName + ".png";
+                    image = ImageIO.read(new URL("file://" + path));
+
+                    graphics.put(imageName, image);
+                }
+                g.drawImage(image, position.x * blockSize, position.y * blockSize, null);
+            } catch (IOException e) {
+                // TODO draw placeholder
+                e.printStackTrace();
+            }
+        });
     }
 
     public void drawText(String text) {
         // TODO draw text as positioned image too
         this.text = text;
-    }
-
-    private void putBlock(Position position, Block block) {
-        blocks[position.x][position.y] = block;
     }
 
     void draw() {
@@ -100,36 +108,6 @@ public class Frame {
         }
     }
 
-    private class Block {
-        public Image image;
-
-        public Block(String imageName) throws IOException {
-            if (graphics.containsKey(imageName)) {
-                this.image = graphics.get(imageName);
-            } else {
-                String path = System.getProperty("user.dir") + "/assets/graphics/" + imageName + ".png";
-                BufferedImage image = ImageIO.read(new URL("file://" + path));
-
-                this.image = image;
-                graphics.put(imageName, image);
-            }
-        }
-
-        public Block(Color colour) {
-            if (pixels.containsKey(colour)) {
-                this.image = pixels.get(colour);
-            } else {
-                this.image = new BufferedImage(blockSize, blockSize, BufferedImage.TYPE_INT_RGB);
-
-                var graphics = image.getGraphics();
-                graphics.setColor(colour);
-                graphics.fillRect(0, 0, blockSize, blockSize);
-
-                pixels.put(colour, this.image);
-            }
-        }
-    }
-
     private class Canvas extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
@@ -138,14 +116,9 @@ public class Frame {
             g.setColor(Color.black);
             g.drawString(text, size * blockSize, 30);
 
-            for (int i = 0; i < size; i++) {
-                Block[] line = blocks[i];
-                for (int j = 0; j < size; j++) {
-                    Block block = line[j];
-                    if (block != null) {
-                        g.drawImage(block.image, i * blockSize, j * blockSize, null);
-                    }
-                }
+            while (actions.size() > 0) {
+                Consumer<Graphics> action = actions.remove();
+                action.accept(g);
             }
         }
     }

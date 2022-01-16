@@ -5,6 +5,7 @@ import com.corgibot.engine.control.Keyboard;
 import com.corgibot.engine.control.Mouse;
 import com.corgibot.engine.game.Frame;
 import com.corgibot.engine.game.Game;
+import com.corgibot.engine.game.GameConfig;
 import com.corgibot.engine.game.Position;
 
 import java.awt.*;
@@ -16,7 +17,7 @@ public class Demo {
     private static int spaceCounter = 0;
 
     public static void main(String[] args) {
-        Game game = new Game();
+        Game game = new Game(new GameConfig(16, 40, 13));
         Keyboard.onKey(KeyEvent.VK_SPACE, Demo::onSpace);
         Mouse.onClick(Demo::onClick);
         game.onFrame(Demo::onFrame);

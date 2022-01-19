@@ -21,7 +21,7 @@ public class Frame {
     //TODO move out everything static
     private static final Queue<Consumer<Graphics>> actions = new ArrayDeque<>();
     private static final Map<String, Image> images = new HashMap<>();
-    public static final JFrame frame = new JFrame(Game.config.getName());
+    public static final JFrame frame = new JFrame("CorgiBot");
     private final Image canvasContent;
     private final Graphics graphics;
     private final int blockSize;

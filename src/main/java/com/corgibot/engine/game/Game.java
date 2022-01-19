@@ -2,6 +2,7 @@ package com.corgibot.engine.game;
 
 import com.corgibot.utils.time.Time;
 
+import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -16,7 +17,7 @@ public class Game {
     private Consumer<Frame> frameHandler;
 
     public Game() {
-        this(new GameConfig("CorgiBot", 16, 40, 100));
+        this(new GameConfig( 16,  13));
     }
 
     public Game(GameConfig config) {

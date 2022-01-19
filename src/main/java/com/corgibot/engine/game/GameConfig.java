@@ -1,20 +1,16 @@
 package com.corgibot.engine.game;
 
+import java.awt.*;
+
 public class GameConfig {
     private String name;
     private int blockSize;
     private int size;
     private int frameDuration;
 
-    public GameConfig(String name, int blockSize, int size, int frameDuration) {
-        this.name = name;
+    public GameConfig( int blockSize, int frameDuration) {
         this.blockSize = blockSize;
-        this.size = size;
         this.frameDuration = frameDuration;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public int getBlockSize() {
@@ -22,7 +18,7 @@ public class GameConfig {
     }
 
     public int getSize() {
-        return size;
+        return (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() / blockSize;
     }
 
     public int getFrameDuration() {

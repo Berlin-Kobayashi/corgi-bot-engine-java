@@ -8,7 +8,7 @@ import com.corgibot.utils.random.Random;
 
 public class Benchmark {
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig("Benchmark", 1, 640, 13));
+        Game game = new Game(new GameConfig(1, 13));
         game.onFrame(Benchmark::onFrame);
         game.start();
     }

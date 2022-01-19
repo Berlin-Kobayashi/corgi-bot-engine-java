@@ -20,7 +20,7 @@ public class Knyacki2 {
     private static int score;
 
     private static boolean isGameOver = true;
-    private static final Game game = new Game(new GameConfig("Knyacki!", 16, 40, 100));
+    private static final Game game = new Game(new GameConfig(16, 100));
     private static final Field[][] world = new Field[Game.config.getSize()][Game.config.getSize()];
 
     private static boolean newGamePressed;

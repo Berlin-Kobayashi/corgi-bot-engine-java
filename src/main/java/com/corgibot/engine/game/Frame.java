@@ -20,10 +20,11 @@ public class Frame {
     private static final Color HEADER_COLOR = new Color(230, 159, 20);
     //TODO move out everything static
     private static final Queue<Consumer<Graphics>> actions = new ArrayDeque<>();
-    private static final Map<String, Image> graphics = new HashMap<>();
+    private static final Map<String, Image> images = new HashMap<>();
     Canvas canvas = null;
     public static final JFrame frame = new JFrame(Game.config.getName());
     private final Image canvasContent;
+    private final Graphics graphics;
     private final int blockSize;
     private final int size;
     private int counter;
@@ -35,6 +36,7 @@ public class Frame {
         this.counter = 0;
 
         this.canvasContent = new BufferedImage(blockSize * size, blockSize * size + MARGIN_TOP, BufferedImage.TYPE_INT_RGB);
+        this.graphics = this.canvasContent.getGraphics();
 
         initialize();
     }
@@ -59,13 +61,13 @@ public class Frame {
         actions.add(g -> {
             try {
                 Image image;
-                if (graphics.containsKey(imageName)) {
-                    image = graphics.get(imageName);
+                if (images.containsKey(imageName)) {
+                    image = images.get(imageName);
                 } else {
                     String path = System.getProperty("user.dir") + "/assets/graphics/" + imageName + ".png";
                     image = ImageIO.read(new URL("file://" + path));
 
-                    graphics.put(imageName, image);
+                    images.put(imageName, image);
                 }
                 g.drawImage(image, pixelPosition.x, pixelPosition.y, null);
             } catch (IOException e) {
@@ -107,20 +109,18 @@ public class Frame {
     }
 
     private class Canvas extends JPanel {
-        public void draw(Graphics graphics) {
-            Graphics g = canvasContent.getGraphics();
-
-            g.setColor(HEADER_COLOR);
-            g.fillRect(0, 0, blockSize * size, MARGIN_TOP);
-            g.setColor(Color.black);
-            g.drawString(text, 0, (int) (MARGIN_TOP / 1.5));
+        public void draw(Graphics g) {
+            graphics.setColor(HEADER_COLOR);
+            graphics.fillRect(0, 0, blockSize * size, MARGIN_TOP);
+            graphics.setColor(Color.black);
+            graphics.drawString(text, 0, (int) (MARGIN_TOP / 1.5));
 
             while (actions.size() > 0) {
                 Consumer<Graphics> action = actions.remove();
-                action.accept(g);
+                action.accept(graphics);
             }
 
-            graphics.drawImage(canvasContent, 0, 0, this);
+            g.drawImage(canvasContent, 0, 0, this);
         }
     }
 }

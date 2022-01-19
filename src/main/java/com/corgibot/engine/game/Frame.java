@@ -26,16 +26,20 @@ public class Frame {
     private final Graphics graphics;
     private final int blockSize;
     private final int size;
+    private final int marginLeft;
     private int counter;
     private String text = "";
     private boolean initialized = false;
 
     public Frame(int blockSize, int size) {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
         this.blockSize = blockSize;
         this.size = size;
+        this.marginLeft = (int) (screenSize.getWidth() - size * blockSize) / 2;
         this.counter = 0;
 
-        this.canvasContent = new BufferedImage(blockSize * size, blockSize * size + HEADER_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        this.canvasContent = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_RGB);
         this.graphics = this.canvasContent.getGraphics();
 
         initialize();
@@ -82,7 +86,7 @@ public class Frame {
     }
 
     private Position getPixelPosition(Position blockPosition) {
-        return new Position(blockPosition.x * blockSize, blockPosition.y * blockSize + HEADER_HEIGHT);
+        return new Position(blockPosition.x * blockSize + marginLeft, blockPosition.y * blockSize + HEADER_HEIGHT);
     }
 
     void draw() {
@@ -92,9 +96,9 @@ public class Frame {
 
     private void draw(Graphics g) {
         graphics.setColor(HEADER_COLOR);
-        graphics.fillRect(0, 0, blockSize * size, HEADER_HEIGHT);
+        graphics.fillRect(marginLeft, 0, blockSize * size, HEADER_HEIGHT);
         graphics.setColor(Color.black);
-        graphics.drawString(text, 0, (int) (HEADER_HEIGHT / 1.5));
+        graphics.drawString(text, marginLeft, (int) (HEADER_HEIGHT / 1.5));
 
         while (actions.size() > 0) {
             Consumer<Graphics> action = actions.remove();
@@ -121,7 +125,7 @@ public class Frame {
             initialized = true;
             frame.addKeyListener(new Keyboard.Listener());
             frame.addMouseListener(new Mouse.Listener());
-            frame.setMinimumSize(new Dimension(blockSize * size, blockSize * size + HEADER_HEIGHT));
+            frame.setMinimumSize(Toolkit.getDefaultToolkit().getScreenSize());
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
             frame.pack();

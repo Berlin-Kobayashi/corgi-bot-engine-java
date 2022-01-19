@@ -22,11 +22,7 @@ public class Mouse {
             PointerInfo a = MouseInfo.getPointerInfo();
             Point b = a.getLocation();
 
-            Component[] components = Frame.frame.getComponents();
-
-            Component canvas = components[0];
-
-            return getBlockPosition(b.x - canvas.getLocationOnScreen().x, b.y - canvas.getLocationOnScreen().y);
+            return getBlockPosition(b.x - Frame.frame.getLocationOnScreen().x, b.y - Frame.frame.getLocationOnScreen().y);
 
         } catch (Exception e) {
             return getBlockPosition(0, 0);
@@ -34,7 +30,12 @@ public class Mouse {
     }
 
     private static Position getBlockPosition(int pixelX, int pixelY) {
-        Position position = new Position(pixelX / Game.config.getBlockSize(), pixelY / Game.config.getBlockSize());
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int marginLeft = (int) (screenSize.getWidth() - Game.config.getSize() * Game.config.getBlockSize()) / 2;
+
+        System.out.println(marginLeft);
+
+        Position position = new Position( (pixelX-marginLeft) / Game.config.getBlockSize(), pixelY / Game.config.getBlockSize());
         if (position.x >= Game.config.getSize()) {
             position.x = Game.config.getSize() - 1;
         }

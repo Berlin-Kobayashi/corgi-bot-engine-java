@@ -21,7 +21,6 @@ public class Frame {
     //TODO move out everything static
     private static final Queue<Consumer<Graphics>> actions = new ArrayDeque<>();
     private static final Map<String, Image> images = new HashMap<>();
-    Canvas canvas = null;
     public static final JFrame frame = new JFrame(Game.config.getName());
     private final Image canvasContent;
     private final Graphics graphics;
@@ -29,6 +28,7 @@ public class Frame {
     private final int size;
     private int counter;
     private String text = "";
+    private boolean initialized = false;
 
     public Frame(int blockSize, int size) {
         this.blockSize = blockSize;
@@ -86,8 +86,22 @@ public class Frame {
     }
 
     void draw() {
-        canvas.draw(canvas.getGraphics());
+        draw(frame.getGraphics());
         counter++;
+    }
+
+    private void draw(Graphics g) {
+        graphics.setColor(HEADER_COLOR);
+        graphics.fillRect(0, 0, blockSize * size, MARGIN_TOP);
+        graphics.setColor(Color.black);
+        graphics.drawString(text, 0, (int) (MARGIN_TOP / 1.5));
+
+        while (actions.size() > 0) {
+            Consumer<Graphics> action = actions.remove();
+            action.accept(graphics);
+        }
+
+        g.drawImage(canvasContent, 0, 0, null);
     }
 
     public int getCounter() {
@@ -95,32 +109,22 @@ public class Frame {
     }
 
     private void initialize() {
-        if (canvas == null) {
-            Canvas canvas = new Canvas();
-            frame.addKeyListener(new Keyboard.Listener());
-            canvas.addMouseListener(new Mouse.Listener());
-            frame.setMinimumSize(new Dimension(blockSize * size, blockSize * size + 48));
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.getContentPane().add(canvas);
-            frame.setVisible(true);
-            frame.pack();
-            this.canvas = canvas;
-        }
-    }
+        if (!initialized) {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsDevice device;
+            device = ge.getDefaultScreenDevice();
 
-    private class Canvas extends JPanel {
-        public void draw(Graphics g) {
-            graphics.setColor(HEADER_COLOR);
-            graphics.fillRect(0, 0, blockSize * size, MARGIN_TOP);
-            graphics.setColor(Color.black);
-            graphics.drawString(text, 0, (int) (MARGIN_TOP / 1.5));
-
-            while (actions.size() > 0) {
-                Consumer<Graphics> action = actions.remove();
-                action.accept(graphics);
+            if (device.isFullScreenSupported()) {
+                device.setFullScreenWindow(frame);
             }
 
-            g.drawImage(canvasContent, 0, 0, this);
+            initialized = true;
+            frame.addKeyListener(new Keyboard.Listener());
+            frame.addMouseListener(new Mouse.Listener());
+            frame.setMinimumSize(new Dimension(blockSize * size, blockSize * size + 48));
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setVisible(true);
+            frame.pack();
         }
     }
 }

@@ -35,19 +35,19 @@ public class Demo {
     private static void onFrame(Frame frame) {
         if (spaceCounter < Game.config.getSize()) {
             if (spacePressed) {
-                frame.drawImage(new Position(spaceCounter, 0), "Item");
+                frame.drawImage(new Position(spaceCounter, 0), "Knyacki/Item");
                 frame.drawBlock(new Position(0, spaceCounter), Color.BLACK);
                 spacePressed = false;
                 spaceCounter++;
 
-                Speaker.play("Bauen");
+                Speaker.play("Knyacki/Bauen");
             }
         }
         if (clickedPosition != null) {
-            frame.drawImage(clickedPosition, "Wand");
+            frame.drawImage(clickedPosition, "Knyacki/Wand");
         }
 
-        frame.drawImage(Mouse.getPosition(), "Körper");
+        frame.drawImage(Mouse.getPosition(), "Knyacki/Körper");
 
         frame.drawHead("Space pressed: " + spaceCounter);
     }

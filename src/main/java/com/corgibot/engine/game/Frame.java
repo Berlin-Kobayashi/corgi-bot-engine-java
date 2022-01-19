@@ -16,7 +16,7 @@ import java.util.Queue;
 import java.util.function.Consumer;
 
 public class Frame {
-    private static final int MARGIN_TOP = 20;
+    private static final int HEADER_HEIGHT = 20;
     private static final Color HEADER_COLOR = new Color(230, 159, 20);
     //TODO move out everything static
     private static final Queue<Consumer<Graphics>> actions = new ArrayDeque<>();
@@ -35,7 +35,7 @@ public class Frame {
         this.size = size;
         this.counter = 0;
 
-        this.canvasContent = new BufferedImage(blockSize * size, blockSize * size + MARGIN_TOP, BufferedImage.TYPE_INT_RGB);
+        this.canvasContent = new BufferedImage(blockSize * size, blockSize * size + HEADER_HEIGHT, BufferedImage.TYPE_INT_RGB);
         this.graphics = this.canvasContent.getGraphics();
 
         initialize();
@@ -82,7 +82,7 @@ public class Frame {
     }
 
     private Position getPixelPosition(Position blockPosition) {
-        return new Position(blockPosition.x * blockSize, blockPosition.y * blockSize + MARGIN_TOP);
+        return new Position(blockPosition.x * blockSize, blockPosition.y * blockSize + HEADER_HEIGHT);
     }
 
     void draw() {
@@ -92,9 +92,9 @@ public class Frame {
 
     private void draw(Graphics g) {
         graphics.setColor(HEADER_COLOR);
-        graphics.fillRect(0, 0, blockSize * size, MARGIN_TOP);
+        graphics.fillRect(0, 0, blockSize * size, HEADER_HEIGHT);
         graphics.setColor(Color.black);
-        graphics.drawString(text, 0, (int) (MARGIN_TOP / 1.5));
+        graphics.drawString(text, 0, (int) (HEADER_HEIGHT / 1.5));
 
         while (actions.size() > 0) {
             Consumer<Graphics> action = actions.remove();
@@ -121,7 +121,7 @@ public class Frame {
             initialized = true;
             frame.addKeyListener(new Keyboard.Listener());
             frame.addMouseListener(new Mouse.Listener());
-            frame.setMinimumSize(new Dimension(blockSize * size, blockSize * size + 48));
+            frame.setMinimumSize(new Dimension(blockSize * size, blockSize * size + HEADER_HEIGHT));
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
             frame.pack();

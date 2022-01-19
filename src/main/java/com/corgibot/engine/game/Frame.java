@@ -6,8 +6,8 @@ import com.corgibot.engine.control.Mouse;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class Frame {
     private static final Map<String, Image> graphics = new HashMap<>();
     Canvas canvas = null;
     public static final JFrame frame = new JFrame(Game.config.getName());
-
+    private final Image canvasContent;
     private final int blockSize;
     private final int size;
     private int counter;
@@ -33,6 +33,8 @@ public class Frame {
         this.blockSize = blockSize;
         this.size = size;
         this.counter = 0;
+
+        this.canvasContent = new BufferedImage(blockSize * size, blockSize * size + MARGIN_TOP, BufferedImage.TYPE_INT_RGB);
 
         initialize();
     }
@@ -74,7 +76,6 @@ public class Frame {
     }
 
     public void drawHead(String text) {
-        // TODO draw text as positioned image too
         this.text = text;
     }
 
@@ -83,11 +84,7 @@ public class Frame {
     }
 
     void draw() {
-        try {
-            SwingUtilities.invokeAndWait(() -> canvas.paint(canvas.getGraphics()));
-        } catch (InterruptedException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        canvas.draw(canvas.getGraphics());
         counter++;
     }
 
@@ -110,9 +107,9 @@ public class Frame {
     }
 
     private class Canvas extends JPanel {
-        @Override
-        protected void paintComponent(Graphics g) {
-            // TODO buffer next frame
+        public void draw(Graphics graphics) {
+            Graphics g = canvasContent.getGraphics();
+
             g.setColor(HEADER_COLOR);
             g.fillRect(0, 0, blockSize * size, MARGIN_TOP);
             g.setColor(Color.black);
@@ -123,7 +120,7 @@ public class Frame {
                 action.accept(g);
             }
 
-            g.dispose();
+            graphics.drawImage(canvasContent, 0, 0, this);
         }
     }
 }

@@ -25,18 +25,20 @@ public class Frame {
     private final Image canvasContent;
     private final Graphics graphics;
     private final int blockSize;
-    private final int size;
+    private final int width;
+    private final int height;
     private final int marginLeft;
     private int counter;
     private String text = "";
     private boolean initialized = false;
 
-    public Frame(int blockSize, int size) {
+    public Frame(int blockSize, int width, int height) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         this.blockSize = blockSize;
-        this.size = size;
-        this.marginLeft = (int) (screenSize.getWidth() - size * blockSize) / 2;
+        this.width = width;
+        this.height = height;
+        this.marginLeft = (int) (screenSize.getWidth() - width * blockSize) / 2;
         this.counter = 0;
 
         this.canvasContent = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_RGB);
@@ -96,7 +98,7 @@ public class Frame {
 
     private void draw(Graphics g) {
         graphics.setColor(HEADER_COLOR);
-        graphics.fillRect(marginLeft, 0, blockSize * size, HEADER_HEIGHT);
+        graphics.fillRect(marginLeft, 0, blockSize * width, HEADER_HEIGHT);
         graphics.setColor(Color.black);
         graphics.drawString(text, marginLeft, (int) (HEADER_HEIGHT / 1.5));
 

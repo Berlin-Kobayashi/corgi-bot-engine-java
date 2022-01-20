@@ -31,21 +31,21 @@ public class Mouse {
 
     private static Position getBlockPosition(int pixelX, int pixelY) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int marginLeft = (int) (screenSize.getWidth() - Game.config.getSize() * Game.config.getBlockSize()) / 2;
+        int marginLeft = (int) (screenSize.getWidth() - Game.config.getWidth() * Game.config.getBlockSize()) / 2;
 
         System.out.println(marginLeft);
 
         Position position = new Position( (pixelX-marginLeft) / Game.config.getBlockSize(), pixelY / Game.config.getBlockSize());
-        if (position.x >= Game.config.getSize()) {
-            position.x = Game.config.getSize() - 1;
+        if (position.x >= Game.config.getWidth()) {
+            position.x = Game.config.getWidth() - 1;
         }
 
         if (position.x < 0) {
             position.x = 0;
         }
 
-        if (position.y >= Game.config.getSize()) {
-            position.y = Game.config.getSize() - 1;
+        if (position.y >= Game.config.getHeight()) {
+            position.y = Game.config.getHeight() - 1;
         }
 
         if (position.y < 0) {

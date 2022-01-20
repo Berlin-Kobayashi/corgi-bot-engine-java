@@ -21,7 +21,7 @@ public class Knyacki2 {
 
     private static boolean isGameOver = true;
     private static final Game game = new Game(new GameConfig(16, 100));
-    private static final Field[][] world = new Field[Game.config.getSize()][Game.config.getSize()];
+    private static final Field[][] world = new Field[Game.config.getWidth()][Game.config.getHeight()];
 
     private static boolean newGamePressed;
 
@@ -105,7 +105,7 @@ public class Knyacki2 {
         body = new ArrayDeque<>();
         endCounter = 0;
         direction = Direction.UP;
-        position = new Position(Game.config.getSize() / 2, Game.config.getSize() / 2);
+        position = new Position(Game.config.getWidth() / 2, Game.config.getHeight() / 2);
         score = 0;
         isGameOver = false;
         newGamePressed = false;
@@ -130,7 +130,7 @@ public class Knyacki2 {
                 break;
         }
 
-        if ((newPosX < 0 || newPosX >= Game.config.getSize() || newPosY < 0 || newPosY >= Game.config.getSize()) ||
+        if ((newPosX < 0 || newPosX >= Game.config.getWidth() || newPosY < 0 || newPosY >= Game.config.getHeight()) ||
                 world[newPosX][newPosY] == Field.BODY || world[newPosX][newPosY] == Field.WALL) {
             if (score % 10 == 0) {
                 endCounter++;
@@ -182,8 +182,8 @@ public class Knyacki2 {
     }
 
     private static void placeItem(Frame frame) {
-        int x = Random.number(0, Game.config.getSize() - 1);
-        int y = Random.number(0, Game.config.getSize() - 1);
+        int x = Random.number(0, Game.config.getWidth() - 1);
+        int y = Random.number(0, Game.config.getHeight() - 1);
         if (world[x][y] == null) {
             frame.drawImage(new Position(x, y), "Knyacki/Item");
             world[x][y] = Field.ITEM;
@@ -191,9 +191,9 @@ public class Knyacki2 {
     }
 
     private static void resetWorld(Frame frame) {
-        for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
-            for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
-                if (columnCounter == 0 || rowCounter == 0 || columnCounter == Game.config.getSize() - 1 || rowCounter == Game.config.getSize() - 1) {
+        for (int columnCounter = 0; columnCounter < Game.config.getWidth(); columnCounter++) {
+            for (int rowCounter = 0; rowCounter < Game.config.getHeight(); rowCounter++) {
+                if (columnCounter == 0 || rowCounter == 0 || columnCounter == Game.config.getWidth() - 1 || rowCounter == Game.config.getHeight() - 1) {
                     frame.drawImage(new Position(columnCounter, rowCounter), "Knyacki/Wand");
                     world[columnCounter][rowCounter] = Field.WALL;
                 } else {
@@ -206,10 +206,11 @@ public class Knyacki2 {
 
     private static void expandWall(Frame frame) {
         Speaker.play("Knyacki/Bauen");
-        int outerWallThickness = (score / 50) + 1;
-        for (int columnCounter = 0; columnCounter < Game.config.getSize(); columnCounter++) {
-            for (int rowCounter = 0; rowCounter < Game.config.getSize(); rowCounter++) {
-                if (columnCounter < outerWallThickness || rowCounter < outerWallThickness || columnCounter > Game.config.getSize() - outerWallThickness - 1 || rowCounter > Game.config.getSize() - outerWallThickness - 1) {
+        int verticalWallThickness = (score / 50) + 1;
+        int horizontalWallThickness = (int)(((double)Game.config.getWidth()/(double)Game.config.getHeight()) * verticalWallThickness + 1);
+        for (int columnCounter = 0; columnCounter < Game.config.getWidth(); columnCounter++) {
+            for (int rowCounter = 0; rowCounter < Game.config.getHeight(); rowCounter++) {
+                if (columnCounter < horizontalWallThickness || rowCounter < verticalWallThickness || columnCounter > Game.config.getWidth() - horizontalWallThickness - 1 || rowCounter > Game.config.getHeight() - verticalWallThickness - 1) {
                     if (world[columnCounter][rowCounter] == Field.HEAD) {
                         Speaker.play("Knyacki/GameOver", 6);
                         isGameOver = true;

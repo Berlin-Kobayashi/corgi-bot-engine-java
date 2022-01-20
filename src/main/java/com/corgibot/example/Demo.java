@@ -33,10 +33,10 @@ public class Demo {
     }
 
     private static void onFrame(Frame frame) {
-        if (spaceCounter < Game.config.getSize()) {
+        if (spaceCounter < Game.config.getHeight()) {
             if (spacePressed) {
                 frame.drawImage(new Position(spaceCounter, 0), "Knyacki/Item");
-                frame.drawBlock(new Position(0, spaceCounter), Color.BLACK);
+                frame.drawBlock(new Position(0, spaceCounter), Color.WHITE);
                 spacePressed = false;
                 spaceCounter++;
 

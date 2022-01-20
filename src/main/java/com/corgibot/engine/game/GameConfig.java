@@ -15,7 +15,11 @@ public class GameConfig {
         return blockSize;
     }
 
-    public int getSize() {
+    public int getWidth() {
+        return (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth()) / blockSize;
+    }
+
+    public int getHeight() {
         return (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 42) / blockSize;
     }
 

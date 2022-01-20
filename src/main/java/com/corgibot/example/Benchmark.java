@@ -14,10 +14,10 @@ public class Benchmark {
     }
 
     private static void onFrame(Frame frame) {
-        frame.drawHead(String.format("Pixels: %,d; Colors: %,d", Game.config.getSize() * Game.config.getSize(), 256 * 256 * 256));
+        frame.drawHead(String.format("Pixels: %,d; Colors: %,d", Game.config.getHeight() * Game.config.getWidth(), 256 * 256 * 256));
 
-        for (int i = 0; i < Game.config.getSize(); i++) {
-            for (int j = 0; j < Game.config.getSize(); j++) {
+        for (int i = 0; i < Game.config.getWidth(); i++) {
+            for (int j = 0; j < Game.config.getHeight(); j++) {
                 Position pos = new Position(i, j);
                 frame.drawBlock(pos, Random.color());
             }

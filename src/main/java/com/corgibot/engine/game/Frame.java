@@ -16,7 +16,7 @@ import java.util.Queue;
 import java.util.function.Consumer;
 
 public class Frame {
-    private static final int HEADER_HEIGHT = 20;
+    static final int HEADER_HEIGHT = 20;
     private static final Color HEADER_COLOR = new Color(230, 159, 20);
     //TODO move out everything static
     private static final Queue<Consumer<Graphics>> actions = new ArrayDeque<>();

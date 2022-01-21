@@ -17,6 +17,45 @@ public class Speaker {
 
     public static void play(String soundName, int volume) {
         try {
+            Clip clip = getSound(soundName);
+            if (!clip.isRunning()) {
+                clip.setFramePosition(0);
+                FloatControl gainControl =
+                        (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                gainControl.setValue(volume);
+                clip.start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void loop(String soundName) {
+        loop(soundName, 0);
+    }
+
+    public static void loop(String soundName, int volume) {
+        try {
+            Clip clip = getSound(soundName);
+            if (!clip.isRunning()) {
+                clip.setFramePosition(0);
+                FloatControl gainControl =
+                        (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+                gainControl.setValue(volume);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Clip getSound(String soundName) {
+        loadSoundOnce(soundName);
+        return sounds.get(soundName);
+    }
+
+    private static void loadSoundOnce(String soundName) {
+        try {
             if (!sounds.containsKey(soundName)) {
                 String path = System.getProperty("user.dir") + "/assets/sounds/" + soundName + ".wav";
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(new URL("file://" + path));
@@ -25,14 +64,6 @@ public class Speaker {
                 clip.open(audioIn);
 
                 sounds.put(soundName, clip);
-            }
-            Clip clip = sounds.get(soundName);
-            if (!clip.isRunning()) {
-                clip.setFramePosition(0);
-                FloatControl gainControl =
-                        (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                gainControl.setValue(volume);
-                clip.start();
             }
         } catch (Exception e) {
             e.printStackTrace();

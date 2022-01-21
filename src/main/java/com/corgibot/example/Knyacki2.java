@@ -47,6 +47,7 @@ public class Knyacki2 {
     }
 
     private static void onFrame(Frame frame) {
+        Speaker.loop("Knyacki/Music");
         if (isGameOver) {
             if (newGamePressed) {
                 newGame(frame);
@@ -205,13 +206,13 @@ public class Knyacki2 {
     }
 
     private static void expandWall(Frame frame) {
-        Speaker.play("Knyacki/Bauen");
         int verticalWallThickness = (score / 50) + 1;
         int horizontalWallThickness = (int)(((double)Game.config.getWidth()/(double)Game.config.getHeight()) * verticalWallThickness + 1);
         for (int columnCounter = 0; columnCounter < Game.config.getWidth(); columnCounter++) {
             for (int rowCounter = 0; rowCounter < Game.config.getHeight(); rowCounter++) {
                 if (columnCounter < horizontalWallThickness || rowCounter < verticalWallThickness || columnCounter > Game.config.getWidth() - horizontalWallThickness - 1 || rowCounter > Game.config.getHeight() - verticalWallThickness - 1) {
                     if (world[columnCounter][rowCounter] == Field.HEAD) {
+                        Speaker.play("Knyacki/Aitz");
                         Speaker.play("Knyacki/GameOver", 6);
                         isGameOver = true;
                     }

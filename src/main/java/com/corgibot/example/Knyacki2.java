@@ -207,7 +207,7 @@ public class Knyacki2 {
 
     private static void expandWall(Frame frame) {
         int verticalWallThickness = (score / 50) + 1;
-        int horizontalWallThickness = (int)(((double)Game.config.getWidth()/(double)Game.config.getHeight()) * verticalWallThickness + 1);
+        int horizontalWallThickness = (int) (((double) Game.config.getWidth() / (double) Game.config.getHeight()) * verticalWallThickness + 1);
         for (int columnCounter = 0; columnCounter < Game.config.getWidth(); columnCounter++) {
             for (int rowCounter = 0; rowCounter < Game.config.getHeight(); rowCounter++) {
                 if (columnCounter < horizontalWallThickness || rowCounter < verticalWallThickness || columnCounter > Game.config.getWidth() - horizontalWallThickness - 1 || rowCounter > Game.config.getHeight() - verticalWallThickness - 1) {
@@ -216,8 +216,10 @@ public class Knyacki2 {
                         Speaker.play("Knyacki/GameOver", 6);
                         isGameOver = true;
                     }
-                    world[columnCounter][rowCounter] = Field.WALL;
-                    frame.drawImage(new Position(columnCounter, rowCounter), "Knyacki/Wand");
+                    if (world[columnCounter][rowCounter] != Field.WALL) {
+                        world[columnCounter][rowCounter] = Field.WALL;
+                        frame.drawImage(new Position(columnCounter, rowCounter), "Knyacki/Wand");
+                    }
                 }
             }
         }

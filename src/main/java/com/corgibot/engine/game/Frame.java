@@ -6,7 +6,6 @@ import com.corgibot.engine.control.Mouse;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayDeque;
@@ -30,7 +29,6 @@ public class Frame {
     private final int marginLeft;
     private int counter;
     private String text = "";
-    private boolean initialized = false;
 
     public Frame(int blockSize, int width, int height) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -41,10 +39,31 @@ public class Frame {
         this.marginLeft = (int) (screenSize.getWidth() - width * blockSize) / 2;
         this.counter = 0;
 
-        initialize();
+        enableFullScreen();
+
+        initializeFrame();
 
         this.canvasContent = frame.createVolatileImage(screenSize.width, screenSize.height);
         this.graphics = this.canvasContent.getGraphics();
+    }
+
+    private void enableFullScreen() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice device;
+        device = ge.getDefaultScreenDevice();
+
+        if (device.isFullScreenSupported()) {
+            device.setFullScreenWindow(frame);
+        }
+    }
+
+    private void initializeFrame() {
+        frame.addKeyListener(new Keyboard.Listener());
+        frame.addMouseListener(new Mouse.Listener());
+        frame.setMinimumSize(Toolkit.getDefaultToolkit().getScreenSize());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        frame.pack();
     }
 
     public void erase(Position position) {
@@ -112,25 +131,5 @@ public class Frame {
 
     public int getCounter() {
         return counter;
-    }
-
-    private void initialize() {
-        if (!initialized) {
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            GraphicsDevice device;
-            device = ge.getDefaultScreenDevice();
-
-            if (device.isFullScreenSupported()) {
-                device.setFullScreenWindow(frame);
-            }
-
-            initialized = true;
-            frame.addKeyListener(new Keyboard.Listener());
-            frame.addMouseListener(new Mouse.Listener());
-            frame.setMinimumSize(Toolkit.getDefaultToolkit().getScreenSize());
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-            frame.pack();
-        }
     }
 }

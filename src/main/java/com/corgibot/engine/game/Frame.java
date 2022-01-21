@@ -41,10 +41,10 @@ public class Frame {
         this.marginLeft = (int) (screenSize.getWidth() - width * blockSize) / 2;
         this.counter = 0;
 
-        this.canvasContent = new BufferedImage(screenSize.width, screenSize.height, BufferedImage.TYPE_INT_RGB);
-        this.graphics = this.canvasContent.getGraphics();
-
         initialize();
+
+        this.canvasContent = frame.createVolatileImage(screenSize.width, screenSize.height);
+        this.graphics = this.canvasContent.getGraphics();
     }
 
     public void erase(Position position) {

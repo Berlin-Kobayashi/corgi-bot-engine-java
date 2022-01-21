@@ -8,6 +8,7 @@ import com.corgibot.engine.game.GameConfig;
 import com.corgibot.engine.game.Position;
 import com.corgibot.utils.random.Random;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -20,7 +21,7 @@ public class Knyacki2 {
     private static int score;
 
     private static boolean isGameOver = true;
-    private static final Game game = new Game(new GameConfig(16, 100));
+    private static final Game game = new Game(new GameConfig(16, 100, Color.black));
     private static final Field[][] world = new Field[Game.config.getWidth()][Game.config.getHeight()];
 
     private static boolean newGamePressed;

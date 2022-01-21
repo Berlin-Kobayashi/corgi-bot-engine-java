@@ -6,9 +6,11 @@ import com.corgibot.engine.game.GameConfig;
 import com.corgibot.engine.game.Position;
 import com.corgibot.utils.random.Random;
 
+import java.awt.*;
+
 public class Benchmark {
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig(1, 13));
+        Game game = new Game(new GameConfig(1, 13, Color.black));
         game.onFrame(Benchmark::onFrame);
         game.start();
     }

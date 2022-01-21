@@ -5,10 +5,12 @@ import java.awt.*;
 public class GameConfig {
     private int blockSize;
     private int frameDuration;
+    private Color backgroundColor;
 
-    public GameConfig(int blockSize, int frameDuration) {
+    public GameConfig(int blockSize, int frameDuration, Color backgroundColor) {
         this.blockSize = blockSize;
         this.frameDuration = frameDuration;
+        this.backgroundColor = backgroundColor;
     }
 
     public int getBlockSize() {
@@ -25,5 +27,9 @@ public class GameConfig {
 
     public int getFrameDuration() {
         return frameDuration;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
     }
 }

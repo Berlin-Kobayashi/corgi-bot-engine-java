@@ -17,12 +17,12 @@ public class Game {
     private Consumer<Frame> frameHandler;
 
     public Game() {
-        this(new GameConfig(16, 13));
+        this(new GameConfig(16, 13, Color.white));
     }
 
     public Game(GameConfig config) {
         Game.config = config;
-        this.frame = new Frame(config.getBlockSize(), config.getWidth(), config.getHeight());
+        this.frame = new Frame(config.getBlockSize(), config.getWidth(), config.getHeight(), config.getBackgroundColor());
     }
 
     public void onFrame(Consumer<Frame> frameHandler) {

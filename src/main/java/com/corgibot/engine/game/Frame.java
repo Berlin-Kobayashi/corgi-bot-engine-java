@@ -30,7 +30,7 @@ public class Frame {
     private int counter;
     private String text = "";
 
-    public Frame(int blockSize, int width, int height) {
+    public Frame(int blockSize, int width, int height, Color backgroundColor) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         this.blockSize = blockSize;
@@ -42,7 +42,7 @@ public class Frame {
         enableFullScreen();
 
         initializeFrame();
-
+        frame.setBackground(backgroundColor);
         this.canvasContent = frame.createVolatileImage(screenSize.width, screenSize.height);
         this.graphics = this.canvasContent.getGraphics();
     }
@@ -91,7 +91,7 @@ public class Frame {
                 } else {
                     String path = System.getProperty("user.dir") + "/assets/graphics/" + imageName + ".png";
                     image = ImageIO.read(new URL("file://" + path));
-
+                    image = image.getScaledInstance(blockSize, blockSize, Image.SCALE_DEFAULT);
                     images.put(imageName, image);
                 }
                 g.drawImage(image, pixelPosition.x, pixelPosition.y, null);

@@ -26,6 +26,7 @@ public class Game {
         }
     }
 
+    // TODO configure asset folder and load all assets on start
     public Game() {
         this(new GameConfig(16, 13, Color.white));
     }

@@ -28,6 +28,7 @@ public class Raster {
     private final int height;
     private final int marginLeft;
     private String text = "";
+    private int fps = 0;
 
     public Raster(int blockSize, int width, int height, Color backgroundColor) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -104,6 +105,10 @@ public class Raster {
         this.text = text;
     }
 
+    void drawFPS(int fps) {
+        this.fps = fps;
+    }
+
     private Position getPixelPosition(Position blockPosition) {
         return new Position(blockPosition.x * blockSize + marginLeft, blockPosition.y * blockSize + HEADER_HEIGHT);
     }
@@ -113,6 +118,7 @@ public class Raster {
         graphics.fillRect(marginLeft, 0, blockSize * width, HEADER_HEIGHT);
         graphics.setColor(Color.black);
         graphics.drawString(text, marginLeft, (int) (HEADER_HEIGHT / 1.5));
+        graphics.drawString("FPS: " + fps, blockSize * width - 50, (int) (HEADER_HEIGHT / 1.5));
 
         while (actions.size() > 0) {
             Consumer<Graphics> action = actions.remove();

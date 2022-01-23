@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 public class Game {
     public static GameConfig config;
     private boolean isRunning;
-    private Instant lastDraw;
+    private Instant previousDraw;
     public final Raster raster;
     private final List<FrameHandler> frameHandlers = new ArrayList<>();
     private int frameCounter = 0;
@@ -28,7 +28,7 @@ public class Game {
 
     // TODO configure asset folder and load all assets on start
     public Game() {
-        this(new GameConfig(16, 13, Color.white));
+        this(new GameConfig(16, 1000/60, Color.white));
     }
 
     public Game(GameConfig config) {
@@ -48,7 +48,7 @@ public class Game {
         isRunning = true;
         Duration frameDuration = Duration.of(config.getFrameDuration(), ChronoUnit.MILLIS);
         while (isRunning) {
-            Duration sinceLastDraw = lastDraw == null ? frameDuration : Duration.between(lastDraw, Instant.now());
+            Duration sinceLastDraw = previousDraw == null ? frameDuration : Duration.between(previousDraw, Instant.now());
             if (sinceLastDraw.compareTo(frameDuration) >= 0) {
                 frameHandlers.forEach(frameHandler -> {
                     if (frameHandler != null && frameCounter % frameHandler.frequency == 0) {
@@ -58,13 +58,11 @@ public class Game {
 
                 raster.draw();
 
-                sinceLastDraw = lastDraw == null ? frameDuration : Duration.between(lastDraw, Instant.now());
-                long delay = sinceLastDraw.minus(frameDuration).toMillis();
-                if (delay > 0) {
-                    System.err.println("Frame delay of: " + delay + " ms");
+                if (previousDraw != null) {
+                    this.raster.drawFPS((int) (1000 / Duration.between(previousDraw, Instant.now()).toMillis()));
                 }
 
-                lastDraw = Instant.now();
+                previousDraw = Instant.now();
 
                 frameCounter++;
             }

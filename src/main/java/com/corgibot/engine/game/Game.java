@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+// TODO Challenge: Remove all static methods / variables in engine
 public class Game {
     public static GameConfig config;
     private boolean isRunning;

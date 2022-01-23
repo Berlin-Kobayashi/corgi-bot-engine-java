@@ -13,7 +13,7 @@ public class Demo {
         game.start();
     }
 
-    private static void onFrame(Raster raster) {
-        raster.drawBlock(Mouse.getPosition(), Color.BLACK);
+    private static void onFrame(Game game) {
+        game.raster.drawBlock(Mouse.getPosition(), Color.BLACK);
     }
 }

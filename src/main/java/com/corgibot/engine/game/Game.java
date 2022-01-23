@@ -4,25 +4,23 @@ import java.awt.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 import java.util.function.Consumer;
 
 public class Game {
     public static GameConfig config;
     private boolean isRunning;
     private Instant lastDraw;
-    private final Raster raster;
+    public final Raster raster;
     private final List<FrameHandler> frameHandlers = new ArrayList<>();
     private int frameCounter = 0;
 
     private static class FrameHandler {
         private final int frequency;
-        private final Consumer<Raster> handler;
+        private final Consumer<Game> handler;
 
-        public FrameHandler(int frequency, Consumer<Raster> handler) {
+        public FrameHandler(int frequency, Consumer<Game> handler) {
             this.frequency = frequency;
             this.handler = handler;
         }
@@ -37,11 +35,11 @@ public class Game {
         this.raster = new Raster(config.getBlockSize(), config.getWidth(), config.getHeight(), config.getBackgroundColor());
     }
 
-    public void onFrame(Consumer<Raster> frameHandler) {
+    public void onFrame(Consumer<Game> frameHandler) {
         this.frameHandlers.add(new FrameHandler(1, frameHandler));
     }
 
-    public void onFrame(int frequency, Consumer<Raster> frameHandler) {
+    public void onFrame(int frequency, Consumer<Game> frameHandler) {
         this.frameHandlers.add(new FrameHandler(frequency, frameHandler));
     }
 
@@ -51,22 +49,23 @@ public class Game {
         while (isRunning) {
             Duration sinceLastDraw = lastDraw == null ? frameDuration : Duration.between(lastDraw, Instant.now());
             if (sinceLastDraw.compareTo(frameDuration) >= 0) {
-                long delay = sinceLastDraw.minus(frameDuration).toMillis();
-
                 frameHandlers.forEach(frameHandler -> {
                     if (frameHandler != null && frameCounter % frameHandler.frequency == 0) {
-                        frameHandler.handler.accept(raster);
+                        frameHandler.handler.accept(this);
                     }
                 });
 
                 raster.draw();
-                lastDraw = Instant.now();
 
-                frameCounter++;
-
+                sinceLastDraw = lastDraw == null ? frameDuration : Duration.between(lastDraw, Instant.now());
+                long delay = sinceLastDraw.minus(frameDuration).toMillis();
                 if (delay > 0) {
                     System.err.println("Frame delay of: " + delay + " ms");
                 }
+
+                lastDraw = Instant.now();
+
+                frameCounter++;
             }
         }
     }

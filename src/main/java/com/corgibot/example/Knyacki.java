@@ -21,8 +21,7 @@ public class Knyacki {
     private static int score;
 
     private static boolean isGameOver = true;
-    private static final Game game = new Game(new GameConfig(16, 100, Color.black));
-    private static final Field[][] world = new Field[Game.config.getWidth()][Game.config.getHeight()];
+    private static Field[][] world;
 
     private static boolean newGamePressed;
 
@@ -35,6 +34,10 @@ public class Knyacki {
     }
 
     public static void main(String[] args) {
+        Game game = new Game(new GameConfig(16, 100, Color.black));
+
+        world = new Field[Game.config.getWidth()][Game.config.getHeight()];
+
         Speaker.loop("Knyacki/Music");
 
         Keyboard.onKey(KeyEvent.VK_LEFT, Knyacki::turnLeft);
@@ -50,13 +53,13 @@ public class Knyacki {
         game.start();
     }
 
-    private static void incrementScore(Raster raster) {
-        if(isGameOver){
+    private static void incrementScore(Game game) {
+        if (isGameOver) {
             return;
         }
 
         score++;
-        raster.drawHead("Score:" + score);
+        game.raster.drawHead("Score:" + score);
     }
 
     private static void onNewGameKey() {
@@ -97,14 +100,14 @@ public class Knyacki {
         }
     }
 
-    private static void newGame(Raster raster) {
+    private static void newGame(Game game) {
         if (!isGameOver || !newGamePressed) {
             return;
         }
 
         Speaker.play("Knyacki/NewGame");
 
-        resetWorld(raster);
+        resetWorld(game.raster);
 
         body = new ArrayDeque<>();
         endCounter = 0;
@@ -115,7 +118,7 @@ public class Knyacki {
         newGamePressed = false;
     }
 
-    private static void move(Raster raster) {
+    private static void move(Game game) {
         if (isGameOver) {
             return;
         }
@@ -168,7 +171,7 @@ public class Knyacki {
             for (int counter = 0; counter < 10 && body.size() > 0; counter++) {
                 Position tail = body.poll();
                 if (world[tail.x][tail.y] == Field.BODY) {
-                    raster.erase(tail);
+                    game.raster.erase(tail);
                 }
                 world[tail.x][tail.y] = null;
             }
@@ -177,27 +180,27 @@ public class Knyacki {
         }
 
         if ((world[newPosX][newPosY] == null || world[newPosX][newPosY] == Field.ITEM)) {
-            raster.erase(position);
-            raster.drawImage(position, "Knyacki/Körper");
+            game.raster.erase(position);
+            game.raster.drawImage(position, "Knyacki/Körper");
             world[position.x][position.y] = Field.BODY;
             body.add(new Position(position.x, position.y));
 
             position.x = newPosX;
             position.y = newPosY;
-            raster.drawImage(position, "Knyacki/Kopf");
+            game.raster.drawImage(position, "Knyacki/Kopf");
             world[position.x][position.y] = Field.HEAD;
         }
     }
 
-    private static void placeItem(Raster raster) {
-        if(isGameOver){
+    private static void placeItem(Game game) {
+        if (isGameOver) {
             return;
         }
 
         int x = Random.number(0, Game.config.getWidth() - 1);
         int y = Random.number(0, Game.config.getHeight() - 1);
         if (world[x][y] == null) {
-            raster.drawImage(new Position(x, y), "Knyacki/Item");
+            game.raster.drawImage(new Position(x, y), "Knyacki/Item");
             world[x][y] = Field.ITEM;
         }
     }
@@ -216,8 +219,8 @@ public class Knyacki {
         }
     }
 
-    private static void expandWall(Raster raster) {
-        if(isGameOver){
+    private static void expandWall(Game game) {
+        if (isGameOver) {
             return;
         }
 
@@ -233,7 +236,7 @@ public class Knyacki {
                     }
                     if (world[columnCounter][rowCounter] != Field.WALL) {
                         world[columnCounter][rowCounter] = Field.WALL;
-                        raster.drawImage(new Position(columnCounter, rowCounter), "Knyacki/Wand");
+                        game.raster.drawImage(new Position(columnCounter, rowCounter), "Knyacki/Wand");
                     }
                 }
             }

@@ -34,7 +34,7 @@ public class KnyackiSnake {
     }
 
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig(16, 100, Color.black));
+        Game game = new Game(new GameConfig(1, 2, Color.black));
 
         world = new Field[Game.config.getWidth()][Game.config.getHeight()];
 

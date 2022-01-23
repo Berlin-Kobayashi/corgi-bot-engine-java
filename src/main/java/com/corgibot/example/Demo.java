@@ -10,12 +10,12 @@ import java.awt.*;
 
 public class Demo {
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig(16, 1000, Color.black));
+        Game game = new Game(new GameConfig(32, 13, Color.black));
         game.onFrame(Demo::onFrame);
         game.start();
     }
 
     private static void onFrame(Game game) {
-        Speaker.play("Knyacki/Aitz");
+        game.raster.drawBlock(Mouse.getPosition(),"Dan");
     }
 }

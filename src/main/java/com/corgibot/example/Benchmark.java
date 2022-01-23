@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class Benchmark {
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig(4, 1, Color.black));
+        Game game = new Game(new GameConfig(1, 1, Color.black));
         game.onFrame(Benchmark::onFrame);
         game.start();
     }

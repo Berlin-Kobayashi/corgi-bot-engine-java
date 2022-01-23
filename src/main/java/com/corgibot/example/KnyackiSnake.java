@@ -2,10 +2,10 @@ package com.corgibot.example;
 
 import com.corgibot.engine.audio.Speaker;
 import com.corgibot.engine.control.Keyboard;
-import com.corgibot.engine.game.Raster;
 import com.corgibot.engine.game.Game;
 import com.corgibot.engine.game.GameConfig;
 import com.corgibot.engine.game.Position;
+import com.corgibot.engine.game.Raster;
 import com.corgibot.utils.random.Random;
 
 import java.awt.*;
@@ -13,7 +13,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-public class Knyacki {
+public class KnyackiSnake {
     private static Position position;
     private static Direction direction;
     private static Queue<Position> body;
@@ -34,21 +34,20 @@ public class Knyacki {
     }
 
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig(16, 100, Color.black));
+        Game game = new Game(new GameConfig(1, 8, Color.black));
 
         world = new Field[Game.config.getWidth()][Game.config.getHeight()];
 
         Speaker.loop("Knyacki/Music");
 
-        Keyboard.onKey(KeyEvent.VK_LEFT, Knyacki::turnLeft);
-        Keyboard.onKey(KeyEvent.VK_RIGHT, Knyacki::turnRight);
-        Keyboard.onKey(KeyEvent.VK_SPACE, Knyacki::onNewGameKey);
+        Keyboard.onKey(KeyEvent.VK_LEFT, KnyackiSnake::turnLeft);
+        Keyboard.onKey(KeyEvent.VK_RIGHT, KnyackiSnake::turnRight);
+        Keyboard.onKey(KeyEvent.VK_SPACE, KnyackiSnake::onNewGameKey);
 
-        game.onFrame(Knyacki::newGame);
-        game.onFrame(Knyacki::move);
-        game.onFrame(Knyacki::placeItem);
-        game.onFrame(50, Knyacki::expandWall);
-        game.onFrame(Knyacki::incrementScore);
+        game.onFrame(KnyackiSnake::newGame);
+        game.onFrame(KnyackiSnake::move);
+        game.onFrame(KnyackiSnake::placeItem);
+        game.onFrame(KnyackiSnake::incrementScore);
 
         game.start();
     }
@@ -145,7 +144,7 @@ public class Knyacki {
 
         if ((newPosX < 0 || newPosX >= Game.config.getWidth() || newPosY < 0 || newPosY >= Game.config.getHeight()) ||
                 world[newPosX][newPosY] == Field.BODY || world[newPosX][newPosY] == Field.WALL) {
-            if (score % 10 == 0) {
+            if (score % 100 == 0) {
                 endCounter++;
                 switch (endCounter) {
                     case 1:
@@ -183,13 +182,13 @@ public class Knyacki {
 
         if ((world[newPosX][newPosY] == null || world[newPosX][newPosY] == Field.ITEM)) {
             game.raster.erase(position);
-            game.raster.drawBlock(position, "Knyacki/Körper");
+            game.raster.drawBlock(position, Color.GREEN);
             world[position.x][position.y] = Field.BODY;
             body.add(new Position(position.x, position.y));
 
             position.x = newPosX;
             position.y = newPosY;
-            game.raster.drawBlock(position, "Knyacki/Kopf");
+            game.raster.drawBlock(position, Color.YELLOW);
             world[position.x][position.y] = Field.HEAD;
         }
     }
@@ -202,7 +201,7 @@ public class Knyacki {
         int x = Random.number(0, Game.config.getWidth() - 1);
         int y = Random.number(0, Game.config.getHeight() - 1);
         if (world[x][y] == null) {
-            game.raster.drawBlock(new Position(x, y), "Knyacki/Item");
+            game.raster.drawBlock(new Position(x, y), Color.WHITE);
             world[x][y] = Field.ITEM;
         }
     }
@@ -210,37 +209,8 @@ public class Knyacki {
     private static void resetWorld(Raster raster) {
         for (int columnCounter = 0; columnCounter < Game.config.getWidth(); columnCounter++) {
             for (int rowCounter = 0; rowCounter < Game.config.getHeight(); rowCounter++) {
-                if (columnCounter == 0 || rowCounter == 0 || columnCounter == Game.config.getWidth() - 1 || rowCounter == Game.config.getHeight() - 1) {
-                    raster.drawBlock(new Position(columnCounter, rowCounter), "Knyacki/Wand");
-                    world[columnCounter][rowCounter] = Field.WALL;
-                } else {
-                    raster.erase(new Position(columnCounter, rowCounter));
-                    world[columnCounter][rowCounter] = null;
-                }
-            }
-        }
-    }
-
-    private static void expandWall(Game game) {
-        if (isGameOver) {
-            return;
-        }
-
-        int verticalWallThickness = (score / 50) + 1;
-        int horizontalWallThickness = (int) (((double) Game.config.getWidth() / (double) Game.config.getHeight()) * verticalWallThickness + 1);
-        for (int columnCounter = 0; columnCounter < Game.config.getWidth(); columnCounter++) {
-            for (int rowCounter = 0; rowCounter < Game.config.getHeight(); rowCounter++) {
-                if (columnCounter < horizontalWallThickness || rowCounter < verticalWallThickness || columnCounter > Game.config.getWidth() - horizontalWallThickness - 1 || rowCounter > Game.config.getHeight() - verticalWallThickness - 1) {
-                    if (world[columnCounter][rowCounter] == Field.HEAD) {
-                        Speaker.play("Knyacki/Aitz");
-                        Speaker.play("Knyacki/GameOver", 6);
-                        isGameOver = true;
-                    }
-                    if (world[columnCounter][rowCounter] != Field.WALL) {
-                        world[columnCounter][rowCounter] = Field.WALL;
-                        game.raster.drawBlock(new Position(columnCounter, rowCounter), "Knyacki/Wand");
-                    }
-                }
+                raster.erase(new Position(columnCounter, rowCounter));
+                world[columnCounter][rowCounter] = null;
             }
         }
     }

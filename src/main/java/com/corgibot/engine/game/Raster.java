@@ -79,7 +79,7 @@ public class Raster {
         });
     }
 
-    public void drawImage(Position position, String imageName) {
+    public void drawBlock(Position position, String imageName) {
         Position pixelPosition = getPixelPosition(position);
 
         actions.add(g -> {

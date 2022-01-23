@@ -63,7 +63,9 @@ public class Knyacki {
     }
 
     private static void onNewGameKey() {
-        newGamePressed = true;
+        if (isGameOver) {
+            newGamePressed = true;
+        }
     }
 
     private static void turnLeft() {

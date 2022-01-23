@@ -1,6 +1,6 @@
 package com.corgibot.engine.control;
 
-import com.corgibot.engine.game.Frame;
+import com.corgibot.engine.game.Raster;
 import com.corgibot.engine.game.Game;
 import com.corgibot.engine.game.Position;
 
@@ -24,7 +24,7 @@ public class Mouse {
             PointerInfo a = MouseInfo.getPointerInfo();
             Point b = a.getLocation();
 
-            return getBlockPosition(b.x - Frame.frame.getLocationOnScreen().x, b.y - Frame.frame.getLocationOnScreen().y);
+            return getBlockPosition(b.x - Raster.frame.getLocationOnScreen().x, b.y - Raster.frame.getLocationOnScreen().y);
 
         } catch (Exception e) {
             return getBlockPosition(0, 0);

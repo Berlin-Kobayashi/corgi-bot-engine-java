@@ -1,6 +1,6 @@
 package com.corgibot.example;
 
-import com.corgibot.engine.game.Frame;
+import com.corgibot.engine.game.Raster;
 import com.corgibot.engine.game.Game;
 import com.corgibot.engine.game.GameConfig;
 import com.corgibot.engine.game.Position;
@@ -15,13 +15,13 @@ public class Benchmark {
         game.start();
     }
 
-    private static void onFrame(Frame frame) {
-        frame.drawHead(String.format("Pixels: %,d; Colors: %,d", Game.config.getHeight() * Game.config.getWidth(), 256 * 256 * 256));
+    private static void onFrame(Raster raster) {
+        raster.drawHead(String.format("Pixels: %,d; Colors: %,d", Game.config.getHeight() * Game.config.getWidth(), 256 * 256 * 256));
 
         for (int i = 0; i < Game.config.getWidth(); i++) {
             for (int j = 0; j < Game.config.getHeight(); j++) {
                 Position pos = new Position(i, j);
-                frame.drawBlock(pos, Random.color());
+                raster.drawBlock(pos, Random.color());
             }
         }
     }

@@ -3,9 +3,9 @@ package com.corgibot.engine.game;
 import java.awt.*;
 
 public class GameConfig {
-    private int blockSize;
-    private int frameDuration;
-    private Color backgroundColor;
+    private final int blockSize;
+    private final int frameDuration;
+    private final Color backgroundColor;
 
     public GameConfig(int blockSize, int frameDuration, Color backgroundColor) {
         this.blockSize = blockSize;

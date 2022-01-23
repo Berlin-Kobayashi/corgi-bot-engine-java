@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.function.Consumer;
 
-public class Frame {
+public class Raster {
     static final int HEADER_HEIGHT = 20;
     private static final Color HEADER_COLOR = new Color(230, 159, 20);
     //TODO move out everything static
@@ -27,17 +27,15 @@ public class Frame {
     private final int width;
     private final int height;
     private final int marginLeft;
-    private int counter;
     private String text = "";
 
-    public Frame(int blockSize, int width, int height, Color backgroundColor) {
+    public Raster(int blockSize, int width, int height, Color backgroundColor) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         this.blockSize = blockSize;
         this.width = width;
         this.height = height;
         this.marginLeft = (int) (screenSize.getWidth() - width * blockSize) / 2;
-        this.counter = 0;
 
         enableFullScreen();
 
@@ -110,12 +108,7 @@ public class Frame {
         return new Position(blockPosition.x * blockSize + marginLeft, blockPosition.y * blockSize + HEADER_HEIGHT);
     }
 
-    void draw() {
-        draw(frame.getGraphics());
-        counter++;
-    }
-
-    private void draw(Graphics g) {
+    public void draw() {
         graphics.setColor(HEADER_COLOR);
         graphics.fillRect(marginLeft, 0, blockSize * width, HEADER_HEIGHT);
         graphics.setColor(Color.black);
@@ -126,10 +119,6 @@ public class Frame {
             action.accept(graphics);
         }
 
-        g.drawImage(canvasContent, 0, 0, null);
-    }
-
-    public int getCounter() {
-        return counter;
+        frame.getGraphics().drawImage(canvasContent, 0, 0, null);
     }
 }

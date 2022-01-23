@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO use event queue speaker actions
 public class Speaker {
     private static final Map<String, Clip> sounds = new HashMap<>();
 

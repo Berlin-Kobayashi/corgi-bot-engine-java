@@ -9,6 +9,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.function.Consumer;
 
+// TODO use event queue for Mouse events, and process them in onFrame to avoid race conditions
+// TODO support right and middle click
 public class Mouse {
 
     private static Consumer<Position> clickHandler;

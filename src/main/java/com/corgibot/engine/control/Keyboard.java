@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO use event queue for Keyboard events, and process them in onFrame to avoid race conditions
 public class Keyboard {
     private static final Map<Integer, Runnable> keyMapping = new HashMap<>();
 

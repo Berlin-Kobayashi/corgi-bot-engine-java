@@ -18,7 +18,7 @@ public class KnyackiSnake {
     private static Direction direction;
     private static Queue<Position> body;
     private static int endCounter;
-    private static int score;
+    private static int length = 1;
 
     private static boolean isGameOver = true;
     private static Field[][] world;
@@ -34,7 +34,7 @@ public class KnyackiSnake {
     }
 
     public static void main(String[] args) {
-        Game game = new Game(new GameConfig(1, 8, Color.black));
+        Game game = new Game(new GameConfig(16, 100, Color.black));
 
         world = new Field[Game.config.getWidth()][Game.config.getHeight()];
 
@@ -53,12 +53,7 @@ public class KnyackiSnake {
     }
 
     private static void incrementScore(Game game) {
-        if (isGameOver) {
-            return;
-        }
-
-        score++;
-        game.raster.drawHead("Score:" + score);
+        game.raster.drawHead("Score:" + length);
     }
 
     private static void onNewGameKey() {
@@ -112,9 +107,9 @@ public class KnyackiSnake {
 
         body = new ArrayDeque<>();
         endCounter = 0;
+        length = 1;
         direction = Direction.UP;
         position = new Position(Game.config.getWidth() / 2, Game.config.getHeight() / 2);
-        score = 0;
         isGameOver = false;
         newGamePressed = false;
     }
@@ -144,7 +139,7 @@ public class KnyackiSnake {
 
         if ((newPosX < 0 || newPosX >= Game.config.getWidth() || newPosY < 0 || newPosY >= Game.config.getHeight()) ||
                 world[newPosX][newPosY] == Field.BODY || world[newPosX][newPosY] == Field.WALL) {
-            if (score % 100 == 0) {
+            if (game.getFrameCounter() % 10 == 0) {
                 endCounter++;
                 switch (endCounter) {
                     case 1:
@@ -168,15 +163,16 @@ public class KnyackiSnake {
             endCounter = 0;
         }
 
-        if (world[newPosX][newPosY] == Field.ITEM) {
-            for (int counter = 0; counter < 10 && body.size() > 0; counter++) {
-                Position tail = body.poll();
-                if (world[tail.x][tail.y] == Field.BODY) {
-                    game.raster.erase(tail);
-                }
-                world[tail.x][tail.y] = null;
+        while (body.size() >= length && body.size() > 0) {
+            Position tail = body.poll();
+            if (world[tail.x][tail.y] == Field.BODY) {
+                game.raster.erase(tail);
             }
+            world[tail.x][tail.y] = null;
+        }
 
+        if (world[newPosX][newPosY] == Field.ITEM) {
+            length++;
             Speaker.play("Knyacki/KnyackiChan");
         }
 

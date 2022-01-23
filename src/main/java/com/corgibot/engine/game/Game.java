@@ -73,4 +73,8 @@ public class Game {
     public void stop() {
         isRunning = false;
     }
+
+    public int getFrameCounter() {
+        return frameCounter;
+    }
 }

@@ -95,7 +95,7 @@ public class Raster {
                 FontMetrics fm = g.getFontMetrics();
                 Rectangle2D rect = fm.getStringBounds(String.valueOf(character), g);
                 g.drawString(String.valueOf(character), (int) (pixelPosition.x + pixelSize / 2 - rect.getWidth() / 2),
-                        (int) (pixelPosition.y + pixelSize / 2 + rect.getHeight() / 2) - size / 2 + blockSize);
+                        (int) (pixelPosition.y + pixelSize / 2 + rect.getHeight() / 2) - size / 2 + 2 * blockSize);
             });
         }
     }

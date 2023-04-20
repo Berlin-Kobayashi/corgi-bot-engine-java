@@ -7,7 +7,11 @@ import com.corgibot.engine.game.Position;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
+// TODO Display Letter Scores
 // TODO Add MouseHandler
 // TODO Add BonusFields
 // TODO Add Scoring
@@ -30,6 +34,144 @@ public class Scrabble {
     private static Color backgroundColor = Color.white;
 
     private static Position highlightedField = new Position(7, 7);
+
+    private static final Map<Character, Integer> letterScores = Map.ofEntries(
+            Map.entry('A', 1),
+            Map.entry('B', 3),
+            Map.entry('C', 4),
+            Map.entry('D', 1),
+            Map.entry('E', 5),
+            Map.entry('F', 4),
+            Map.entry('G', 2),
+            Map.entry('H', 2),
+            Map.entry('I', 1),
+            Map.entry('J', 6),
+            Map.entry('K', 4),
+            Map.entry('L', 2),
+            Map.entry('M', 3),
+            Map.entry('N', 9),
+            Map.entry('O', 2),
+            Map.entry('P', 4),
+            Map.entry('Q', 10),
+            Map.entry('R', 1),
+            Map.entry('S', 1),
+            Map.entry('T', 1),
+            Map.entry('U', 1),
+            Map.entry('V', 6),
+            Map.entry('W', 3),
+            Map.entry('X', 8),
+            Map.entry('Y', 10),
+            Map.entry('Z', 3),
+            Map.entry('Ä', 6),
+            Map.entry('Ö', 8),
+            Map.entry('Ü', 6),
+            Map.entry(' ', 0)
+    );
+
+    private static List<Character> bag = Arrays.asList(
+            'A',
+            'A',
+            'A',
+            'A',
+            'A',
+            'B',
+            'B',
+            'C',
+            'C',
+            'D',
+            'D',
+            'D',
+            'D',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'E',
+            'F',
+            'F',
+            'G',
+            'G',
+            'G',
+            'H',
+            'H',
+            'H',
+            'H',
+            'I',
+            'I',
+            'I',
+            'I',
+            'I',
+            'I',
+            'J',
+            'K',
+            'K',
+            'L',
+            'L',
+            'L',
+            'M',
+            'M',
+            'M',
+            'M',
+            'N',
+            'N',
+            'N',
+            'N',
+            'N',
+            'N',
+            'N',
+            'N',
+            'N',
+            'O',
+            'O',
+            'O',
+            'P',
+            'Q',
+            'R',
+            'R',
+            'R',
+            'R',
+            'R',
+            'R',
+            'S',
+            'S',
+            'S',
+            'S',
+            'S',
+            'S',
+            'S',
+            'T',
+            'T',
+            'T',
+            'T',
+            'T',
+            'T',
+            'U',
+            'U',
+            'U',
+            'U',
+            'U',
+            'U',
+            'V',
+            'W',
+            'X',
+            'Y',
+            'Z',
+            'Ä',
+            'Ö',
+            'Ü',
+            ' ',
+            ' '
+    );
 
     public static void main(String[] args) {
         grid = new char[GRID_SIZE][GRID_SIZE];
@@ -84,6 +226,10 @@ public class Scrabble {
         }
 
         game.raster.drawBlock(position, gridColor, character, FIELD_SIZE);
+
+        if (letterScores.containsKey(character)) {
+            game.raster.drawBlock(position, gridColor, letterScores.get(character).toString().charAt(0), 5);
+        }
     }
 
     private static void onClick(Position position) {

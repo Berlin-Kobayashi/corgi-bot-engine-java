@@ -1,7 +1,6 @@
 package com.corgibot.example;
 
 import com.corgibot.engine.control.Keyboard;
-import com.corgibot.engine.control.Mouse;
 import com.corgibot.engine.game.Game;
 import com.corgibot.engine.game.GameConfig;
 import com.corgibot.engine.game.Position;
@@ -21,7 +20,9 @@ public class Scrabble {
 
     private static char[][] grid;
 
-    private static int fieldWith = 20;
+    private static final int FIELD_SIZE = 20;
+
+    private static final int GRID_SIZE = 15;
 
     private static Color gridColor = Color.black;
     private static Color highlightGridColor = Color.red;
@@ -31,7 +32,7 @@ public class Scrabble {
     private static Position highlightedField = new Position(7, 7);
 
     public static void main(String[] args) {
-        grid = new char[15][15];
+        grid = new char[GRID_SIZE][GRID_SIZE];
 
         // TODO Remove Demo data
         grid[7][7] = 'S';
@@ -45,8 +46,12 @@ public class Scrabble {
 
         Game game = new Game(new GameConfig(2, 1, backgroundColor));
 
-        Mouse.onClick(Scrabble::onClick);
 
+        Keyboard.onKey(KeyEvent.VK_UP, Scrabble::up);
+        Keyboard.onKey(KeyEvent.VK_DOWN, Scrabble::down);
+        Keyboard.onKey(KeyEvent.VK_LEFT, Scrabble::left);
+        Keyboard.onKey(KeyEvent.VK_RIGHT, Scrabble::right);
+        Keyboard.onKey(KeyEvent.VK_BACK_SPACE, Scrabble::delete);
         Keyboard.onAnyKey(Scrabble::onAnyKey);
 
         game.onFrame(Scrabble::onFrame);
@@ -57,19 +62,19 @@ public class Scrabble {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 char character = grid[i][j];
-                drawField(game, character, new Position(i * fieldWith, j * fieldWith), gridColor);
+                drawField(game, character, new Position(i * FIELD_SIZE, j * FIELD_SIZE), gridColor);
             }
 
-            drawField(game, grid[highlightedField.x][highlightedField.y], new Position(highlightedField.x * fieldWith, highlightedField.y * fieldWith), highlightGridColor);
+            drawField(game, grid[highlightedField.x][highlightedField.y], new Position(highlightedField.x * FIELD_SIZE, highlightedField.y * FIELD_SIZE), highlightGridColor);
         }
     }
 
     private static void drawField(Game game, char character, Position position, Color color) {
-        for (int i = 0; i < fieldWith + 1; i++) {
-            for (int j = 0; j < fieldWith + 1; j++) {
+        for (int i = 0; i < FIELD_SIZE + 1; i++) {
+            for (int j = 0; j < FIELD_SIZE + 1; j++) {
                 Position pixelPos = new Position(position.x + i, position.y + j);
 
-                if (i == fieldWith || j == fieldWith || i == 0 || j == 0) {
+                if (i == FIELD_SIZE || j == FIELD_SIZE || i == 0 || j == 0) {
                     game.raster.erase(pixelPos);
                     game.raster.drawBlock(pixelPos, color);
                 } else {
@@ -78,15 +83,46 @@ public class Scrabble {
             }
         }
 
-        game.raster.drawBlock(position, gridColor, character, fieldWith);
+        game.raster.drawBlock(position, gridColor, character, FIELD_SIZE);
     }
 
     private static void onClick(Position position) {
-        highlightedField = new Position(position.x / fieldWith, (position.y - fieldWith / 2) / fieldWith);
+        highlightedField = new Position(position.x / FIELD_SIZE, (position.y - FIELD_SIZE / 2) / FIELD_SIZE);
 //        grid[position.x / fieldWith][(position.y - fieldWith / 2) / fieldWith] = 'S';
     }
 
+    private static void up() {
+        if (highlightedField.y > 0) {
+            highlightedField.y -= 1;
+        }
+    }
+
+    private static void down() {
+        if (highlightedField.y < GRID_SIZE - 1) {
+            highlightedField.y += 1;
+        }
+    }
+
+    private static void left() {
+        if (highlightedField.x > 0) {
+            highlightedField.x -= 1;
+        }
+    }
+
+    private static void right() {
+        if (highlightedField.x < GRID_SIZE - 1) {
+            highlightedField.x += 1;
+        }
+    }
+
+    private static void delete() {
+        grid[highlightedField.x][highlightedField.y] = 0;
+
+    }
+
     private static void onAnyKey(KeyEvent keyEvent) {
-        grid[highlightedField.x][highlightedField.y] = Character.toUpperCase(keyEvent.getKeyChar());
+        if ((keyEvent.getKeyChar() >= 'a' && keyEvent.getKeyChar() <= 'z') || (keyEvent.getKeyChar() >= 'A' && keyEvent.getKeyChar() <= 'Z')) {
+            grid[highlightedField.x][highlightedField.y] = Character.toUpperCase(keyEvent.getKeyChar());
+        }
     }
 }

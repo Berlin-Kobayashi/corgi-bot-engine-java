@@ -6,6 +6,7 @@ import com.corgibot.engine.control.Mouse;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayDeque;
@@ -29,6 +30,7 @@ public class Raster {
     private final int marginLeft;
     private String text = "";
     private int fps = 0;
+    private Font headerFont;
 
     public Raster(int blockSize, int width, int height, Color backgroundColor) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -44,6 +46,7 @@ public class Raster {
         frame.setBackground(backgroundColor);
         this.canvasContent = frame.createVolatileImage(screenSize.width, screenSize.height);
         this.graphics = this.canvasContent.getGraphics();
+        this.headerFont = graphics.getFont();
     }
 
     private void enableFullScreen() {
@@ -77,6 +80,24 @@ public class Raster {
             g.setColor(color);
             g.fillRect(pixelPosition.x, pixelPosition.y, blockSize, blockSize);
         });
+    }
+
+    public void drawBlock(Position position, Color color, char character, int size) {
+        if (character != 0) {
+
+
+            Position pixelPosition = getPixelPosition(position);
+            int pixelSize = size * blockSize;
+
+            actions.add(g -> {
+                g.setColor(color);
+                g.setFont(new Font("Arial", Font.BOLD, pixelSize));
+                FontMetrics fm = g.getFontMetrics();
+                Rectangle2D rect = fm.getStringBounds(String.valueOf(character), g);
+                g.drawString(String.valueOf(character), (int) (pixelPosition.x + pixelSize / 2 - rect.getWidth() / 2),
+                        (int) (pixelPosition.y + pixelSize / 2 + rect.getHeight() / 2) - size / 2 + blockSize);
+            });
+        }
     }
 
     public void drawBlock(Position position, String imageName) {
@@ -117,6 +138,7 @@ public class Raster {
         graphics.setColor(HEADER_COLOR);
         graphics.fillRect(marginLeft, 0, blockSize * width, HEADER_HEIGHT);
         graphics.setColor(Color.black);
+        graphics.setFont(headerFont);
         graphics.drawString(text, marginLeft, (int) (HEADER_HEIGHT / 1.5));
         graphics.drawString("FPS: " + fps, blockSize * width - 50, (int) (HEADER_HEIGHT / 1.5));
 

@@ -16,7 +16,6 @@ import static java.awt.Color.*;
 
 // TODO Add BonusFields
 // TODO Display Score
-// TODO Stop when bag empty
 // TODO Add letter swap
 
 public class Scrabble {
@@ -269,7 +268,9 @@ public class Scrabble {
         turn.clear();
 
         for (int i = bench.size(); i < BENCH_SIZE; i++) {
-            bench.add(pullLetterFromBag());
+            if (bag.size() > 0) {
+                bench.add(pullLetterFromBag());
+            }
         }
     }
 }

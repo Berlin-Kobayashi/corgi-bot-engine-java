@@ -8,8 +8,10 @@ import com.corgibot.engine.game.Position;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 // TODO Display Letter Scores
 // TODO Add MouseHandler
@@ -24,9 +26,12 @@ public class Scrabble {
 
     private static char[][] grid;
 
+    private static char[] bench;
+
     private static final int FIELD_SIZE = 20;
 
     private static final int GRID_SIZE = 15;
+    private static final int BENCH_SIZE = 7;
 
     private static Color gridColor = Color.black;
     private static Color highlightGridColor = Color.red;
@@ -68,7 +73,7 @@ public class Scrabble {
             Map.entry(' ', 0)
     );
 
-    private static List<Character> bag = Arrays.asList(
+    private static final List<Character> bag = new LinkedList<>(Arrays.asList(
             'A',
             'A',
             'A',
@@ -171,20 +176,13 @@ public class Scrabble {
             'Ü',
             ' ',
             ' '
-    );
+    ));
 
     public static void main(String[] args) {
         grid = new char[GRID_SIZE][GRID_SIZE];
 
-        // TODO Remove Demo data
-        grid[7][7] = 'S';
-        grid[7][8] = 'C';
-        grid[7][9] = 'R';
-        grid[7][10] = 'A';
-        grid[7][11] = 'B';
-        grid[7][12] = 'B';
-        grid[7][13] = 'L';
-        grid[7][14] = 'E';
+        bench = new char[BENCH_SIZE];
+        resetBench();
 
         Game game = new Game(new GameConfig(2, 1, backgroundColor));
 
@@ -200,7 +198,23 @@ public class Scrabble {
         game.start();
     }
 
+    private static void resetBench() {
+
+        for (int i = 0; i < BENCH_SIZE; i++) {
+            bench[i] = drawLetterFromBag();
+        }
+    }
+
+    private static char drawLetterFromBag() {
+        return bag.remove(ThreadLocalRandom.current().nextInt(0, bag.size()));
+    }
+
     private static void onFrame(Game game) {
+        drawGrid(game);
+        drawBench(game);
+    }
+
+    private static void drawGrid(Game game) {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 char character = grid[i][j];
@@ -208,6 +222,12 @@ public class Scrabble {
             }
 
             drawField(game, grid[highlightedField.x][highlightedField.y], new Position(highlightedField.x * FIELD_SIZE, highlightedField.y * FIELD_SIZE), highlightGridColor);
+        }
+    }
+
+    private static void drawBench(Game game) {
+        for (int i = 0; i < BENCH_SIZE; i++) {
+            drawField(game, bench[i], new Position((i + 4) * FIELD_SIZE, (GRID_SIZE + 2) * FIELD_SIZE), gridColor);
         }
     }
 
@@ -230,11 +250,6 @@ public class Scrabble {
         if (letterScores.containsKey(character)) {
             game.raster.drawBlock(position, gridColor, letterScores.get(character).toString().charAt(0), 5);
         }
-    }
-
-    private static void onClick(Position position) {
-        highlightedField = new Position(position.x / FIELD_SIZE, (position.y - FIELD_SIZE / 2) / FIELD_SIZE);
-//        grid[position.x / fieldWith][(position.y - fieldWith / 2) / fieldWith] = 'S';
     }
 
     private static void up() {

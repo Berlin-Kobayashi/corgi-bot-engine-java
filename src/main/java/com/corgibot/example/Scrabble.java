@@ -55,7 +55,7 @@ public class Scrabble {
             Map.entry('K', 4),
             Map.entry('L', 2),
             Map.entry('M', 3),
-            Map.entry('N', 9),
+            Map.entry('N', 1),
             Map.entry('O', 2),
             Map.entry('P', 4),
             Map.entry('Q', 10),

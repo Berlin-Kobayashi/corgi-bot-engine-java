@@ -82,9 +82,9 @@ public class Raster {
         });
     }
 
-    public void drawBlock(Position position, Color color, char character, int size) {
-        if (character != 0) {
-
+    public void drawBlock(Position position, Color color, String text, int size) {
+        if (!text.isEmpty()) {
+            System.out.println(text);
 
             Position pixelPosition = getPixelPosition(position);
             int pixelSize = size * blockSize;
@@ -93,8 +93,8 @@ public class Raster {
                 g.setColor(color);
                 g.setFont(new Font("Arial", Font.BOLD, pixelSize));
                 FontMetrics fm = g.getFontMetrics();
-                Rectangle2D rect = fm.getStringBounds(String.valueOf(character), g);
-                g.drawString(String.valueOf(character), (int) (pixelPosition.x + pixelSize / 2 - rect.getWidth() / 2),
+                Rectangle2D rect = fm.getStringBounds(text, g);
+                g.drawString(String.valueOf(text), (int) (pixelPosition.x + pixelSize / 2 - rect.getWidth() / 2),
                         (int) (pixelPosition.y + pixelSize / 2 + rect.getHeight() / 2) - size / 2 + 2 * blockSize);
             });
         }

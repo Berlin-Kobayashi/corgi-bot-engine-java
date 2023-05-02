@@ -199,10 +199,12 @@ public class Scrabble {
     private static void drawField(Game game, char character, Position position, Color color) {
         drawEmptyField(game, position, color);
 
-        game.raster.drawBlock(position, gridColor, character, FIELD_SIZE);
+        if (character != 0) {
+            game.raster.drawBlock(position, gridColor, String.valueOf(character), FIELD_SIZE);
+        }
 
         if (letterScores.containsKey(character)) {
-            game.raster.drawBlock(position, gridColor, letterScores.get(character).toString().charAt(0), 5);
+            game.raster.drawBlock(position, gridColor, letterScores.get(character).toString(), 5);
         }
     }
 

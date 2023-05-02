@@ -286,13 +286,11 @@ public class Scrabble {
 
     private static void onAnyKey(KeyEvent keyEvent) {
         char pressed = Character.toUpperCase(keyEvent.getKeyChar());
-        if (pressed >= 'A' && pressed <= 'Z') {
 
-            if (bench.contains(pressed)) {
-                grid[highlightedField.x][highlightedField.y] = Character.toUpperCase(pressed);
-                bench.remove(bench.indexOf(pressed));
-                bench.add(pullLetterFromBag());
-            }
+        if (bench.contains(pressed)) {
+            grid[highlightedField.x][highlightedField.y] = Character.toUpperCase(pressed);
+            bench.remove(bench.indexOf(pressed));
+            bench.add(pullLetterFromBag());
         }
     }
 }

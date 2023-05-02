@@ -7,11 +7,12 @@ import com.corgibot.engine.game.Position;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static java.awt.Color.*;
 
 // TODO Display Letter Scores
 // TODO Add MouseHandler
@@ -24,22 +25,26 @@ import java.util.concurrent.ThreadLocalRandom;
 // TODO Add Multiplayer
 
 public class Scrabble {
-
-    private static char[][] grid;
+    record Placement(char letter, int x, int y) {
+    }
 
     private static List<Character> bench;
+
+    private static final List<Placement> turn = new LinkedList<>();
+
+    private static final List<Placement> placements = new LinkedList<>();
 
     private static final int FIELD_SIZE = 20;
 
     private static final int GRID_SIZE = 15;
     private static final int BENCH_SIZE = 7;
 
-    private static Color gridColor = Color.black;
-    private static Color highlightGridColor = Color.red;
-    private static Color filledGridColor = Color.blue;
-    private static Color backgroundColor = Color.white;
+    private static final Color gridColor = black;
+    private static final Color highlightGridColor = red;
+    private static final Color filledGridColor = blue;
+    private static final Color backgroundColor = white;
 
-    private static Position highlightedField = new Position(7, 7);
+    private static final Position highlightedField = new Position(7, 7);
 
     private static final Map<Character, Integer> letterScores = Map.ofEntries(
             Map.entry('A', 1),
@@ -110,8 +115,6 @@ public class Scrabble {
     private static final List<Character> bag = new LinkedList<>();
 
     public static void main(String[] args) {
-        grid = new char[GRID_SIZE][GRID_SIZE];
-
         initializeBag();
 
         bench = new LinkedList<>();
@@ -125,6 +128,7 @@ public class Scrabble {
         Keyboard.onKey(KeyEvent.VK_LEFT, Scrabble::left);
         Keyboard.onKey(KeyEvent.VK_RIGHT, Scrabble::right);
         Keyboard.onKey(KeyEvent.VK_BACK_SPACE, Scrabble::delete);
+        Keyboard.onKey(KeyEvent.VK_ENTER, Scrabble::endTurn);
         Keyboard.onAnyKey(Scrabble::onAnyKey);
 
         game.onFrame(Scrabble::onFrame);
@@ -155,29 +159,54 @@ public class Scrabble {
 
     private static void onFrame(Game game) {
         drawGrid(game);
+        drawTurn(game);
+        drawPlacements(game);
         drawBench(game);
+
+        drawEmptyField(game, new Position(highlightedField.x * FIELD_SIZE, highlightedField.y * FIELD_SIZE), highlightGridColor);
     }
 
     private static void drawGrid(Game game) {
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                char character = grid[i][j];
-                drawField(game, character, new Position(i * FIELD_SIZE, j * FIELD_SIZE), gridColor);
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                drawField(game, (char) 0, new Position(i * FIELD_SIZE, j * FIELD_SIZE), gridColor);
             }
+        }
+    }
 
-            drawField(game, grid[highlightedField.x][highlightedField.y], new Position(highlightedField.x * FIELD_SIZE, highlightedField.y * FIELD_SIZE), highlightGridColor);
+    private static void drawTurn(Game game) {
+        for (Placement placement : turn) {
+            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), filledGridColor);
+        }
+    }
+
+    private static void drawPlacements(Game game) {
+        for (Placement placement : placements) {
+            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), gridColor);
         }
     }
 
     private static void drawBench(Game game) {
-        int i = 0;
-        for (char letter : bench) {
-            drawField(game, letter, new Position((i + 4) * FIELD_SIZE, (GRID_SIZE + 2) * FIELD_SIZE), gridColor);
-            i++;
+        for (int i = 0; i < BENCH_SIZE; i++) {
+            if (bench.size() > i) {
+                drawField(game, bench.get(i), new Position((i + 4) * FIELD_SIZE, (GRID_SIZE + 2) * FIELD_SIZE), gridColor);
+            } else {
+                drawField(game, (char) 0, new Position((i + 4) * FIELD_SIZE, (GRID_SIZE + 2) * FIELD_SIZE), gridColor);
+            }
         }
     }
 
     private static void drawField(Game game, char character, Position position, Color color) {
+        drawEmptyField(game, position, color);
+
+        game.raster.drawBlock(position, gridColor, character, FIELD_SIZE);
+
+        if (letterScores.containsKey(character)) {
+            game.raster.drawBlock(position, gridColor, letterScores.get(character).toString().charAt(0), 5);
+        }
+    }
+
+    private static void drawEmptyField(Game game, Position position, Color color) {
         for (int i = 0; i < FIELD_SIZE + 1; i++) {
             for (int j = 0; j < FIELD_SIZE + 1; j++) {
                 Position pixelPos = new Position(position.x + i, position.y + j);
@@ -189,12 +218,6 @@ public class Scrabble {
                     game.raster.erase(pixelPos);
                 }
             }
-        }
-
-        game.raster.drawBlock(position, gridColor, character, FIELD_SIZE);
-
-        if (letterScores.containsKey(character)) {
-            game.raster.drawBlock(position, gridColor, letterScores.get(character).toString().charAt(0), 5);
         }
     }
 
@@ -223,16 +246,22 @@ public class Scrabble {
     }
 
     private static void delete() {
-        grid[highlightedField.x][highlightedField.y] = 0;
-
     }
 
     private static void onAnyKey(KeyEvent keyEvent) {
         char pressed = Character.toUpperCase(keyEvent.getKeyChar());
 
         if (bench.contains(pressed)) {
-            grid[highlightedField.x][highlightedField.y] = Character.toUpperCase(pressed);
             bench.remove(bench.indexOf(pressed));
+            turn.add(new Placement(pressed, highlightedField.x, highlightedField.y));
+        }
+    }
+
+    private static void endTurn() {
+        placements.addAll(turn);
+        turn.clear();
+
+        for (int i = bench.size(); i < BENCH_SIZE; i++) {
             bench.add(pullLetterFromBag());
         }
     }

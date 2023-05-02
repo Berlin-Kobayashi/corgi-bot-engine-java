@@ -16,7 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
 // TODO Display Letter Scores
 // TODO Add MouseHandler
 // TODO Add BonusFields
-// TODO Add Scoring
+// TODO Display Score
+// TODO Stop when bag empty
 
 // TODO Add Bag
 // TODO Add Bank
@@ -26,7 +27,7 @@ public class Scrabble {
 
     private static char[][] grid;
 
-    private static char[] bench;
+    private static List<Character> bench;
 
     private static final int FIELD_SIZE = 20;
 
@@ -181,7 +182,7 @@ public class Scrabble {
     public static void main(String[] args) {
         grid = new char[GRID_SIZE][GRID_SIZE];
 
-        bench = new char[BENCH_SIZE];
+        bench = new LinkedList<>();
         resetBench();
 
         Game game = new Game(new GameConfig(2, 1, backgroundColor));
@@ -201,11 +202,11 @@ public class Scrabble {
     private static void resetBench() {
 
         for (int i = 0; i < BENCH_SIZE; i++) {
-            bench[i] = drawLetterFromBag();
+            bench.add(pullLetterFromBag());
         }
     }
 
-    private static char drawLetterFromBag() {
+    private static char pullLetterFromBag() {
         return bag.remove(ThreadLocalRandom.current().nextInt(0, bag.size()));
     }
 
@@ -226,8 +227,10 @@ public class Scrabble {
     }
 
     private static void drawBench(Game game) {
-        for (int i = 0; i < BENCH_SIZE; i++) {
-            drawField(game, bench[i], new Position((i + 4) * FIELD_SIZE, (GRID_SIZE + 2) * FIELD_SIZE), gridColor);
+        int i = 0;
+        for (char letter : bench) {
+            drawField(game, letter, new Position((i + 4) * FIELD_SIZE, (GRID_SIZE + 2) * FIELD_SIZE), gridColor);
+            i++;
         }
     }
 
@@ -282,8 +285,14 @@ public class Scrabble {
     }
 
     private static void onAnyKey(KeyEvent keyEvent) {
-        if ((keyEvent.getKeyChar() >= 'a' && keyEvent.getKeyChar() <= 'z') || (keyEvent.getKeyChar() >= 'A' && keyEvent.getKeyChar() <= 'Z')) {
-            grid[highlightedField.x][highlightedField.y] = Character.toUpperCase(keyEvent.getKeyChar());
+        char pressed = Character.toUpperCase(keyEvent.getKeyChar());
+        if (pressed >= 'A' && pressed <= 'Z') {
+
+            if (bench.contains(pressed)) {
+                grid[highlightedField.x][highlightedField.y] = Character.toUpperCase(pressed);
+                bench.remove(bench.indexOf(pressed));
+                bench.add(pullLetterFromBag());
+            }
         }
     }
 }

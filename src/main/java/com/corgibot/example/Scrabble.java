@@ -74,113 +74,45 @@ public class Scrabble {
             Map.entry(' ', 0)
     );
 
-    private static final List<Character> bag = new LinkedList<>(Arrays.asList(
-            'A',
-            'A',
-            'A',
-            'A',
-            'A',
-            'B',
-            'B',
-            'C',
-            'C',
-            'D',
-            'D',
-            'D',
-            'D',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'E',
-            'F',
-            'F',
-            'G',
-            'G',
-            'G',
-            'H',
-            'H',
-            'H',
-            'H',
-            'I',
-            'I',
-            'I',
-            'I',
-            'I',
-            'I',
-            'J',
-            'K',
-            'K',
-            'L',
-            'L',
-            'L',
-            'M',
-            'M',
-            'M',
-            'M',
-            'N',
-            'N',
-            'N',
-            'N',
-            'N',
-            'N',
-            'N',
-            'N',
-            'N',
-            'O',
-            'O',
-            'O',
-            'P',
-            'Q',
-            'R',
-            'R',
-            'R',
-            'R',
-            'R',
-            'R',
-            'S',
-            'S',
-            'S',
-            'S',
-            'S',
-            'S',
-            'S',
-            'T',
-            'T',
-            'T',
-            'T',
-            'T',
-            'T',
-            'U',
-            'U',
-            'U',
-            'U',
-            'U',
-            'U',
-            'V',
-            'W',
-            'X',
-            'Y',
-            'Z',
-            'Ä',
-            'Ö',
-            'Ü',
-            ' ',
-            ' '
-    ));
+    private static final Map<Character, Integer> letterAmounts = Map.ofEntries(
+            Map.entry('A', 5),
+            Map.entry('B', 2),
+            Map.entry('C', 2),
+            Map.entry('D', 4),
+            Map.entry('E', 15),
+            Map.entry('F', 2),
+            Map.entry('G', 3),
+            Map.entry('H', 4),
+            Map.entry('I', 6),
+            Map.entry('J', 1),
+            Map.entry('K', 2),
+            Map.entry('L', 3),
+            Map.entry('M', 4),
+            Map.entry('N', 9),
+            Map.entry('O', 3),
+            Map.entry('P', 1),
+            Map.entry('Q', 1),
+            Map.entry('R', 6),
+            Map.entry('S', 7),
+            Map.entry('T', 6),
+            Map.entry('U', 6),
+            Map.entry('V', 1),
+            Map.entry('W', 1),
+            Map.entry('X', 1),
+            Map.entry('Y', 1),
+            Map.entry('Z', 1),
+            Map.entry('Ä', 1),
+            Map.entry('Ö', 1),
+            Map.entry('Ü', 1),
+            Map.entry(' ', 2)
+    );
+
+    private static final List<Character> bag = new LinkedList<>();
 
     public static void main(String[] args) {
         grid = new char[GRID_SIZE][GRID_SIZE];
+
+        initializeBag();
 
         bench = new LinkedList<>();
         resetBench();
@@ -200,9 +132,20 @@ public class Scrabble {
     }
 
     private static void resetBench() {
-
         for (int i = 0; i < BENCH_SIZE; i++) {
             bench.add(pullLetterFromBag());
+        }
+    }
+
+    private static void initializeBag() {
+        for (Map.Entry<Character, Integer> entry : letterAmounts.entrySet()) {
+            addLetterToBag(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private static void addLetterToBag(char letter, int amount) {
+        for (int i = 0; i < amount; i++) {
+            bag.add(letter);
         }
     }
 

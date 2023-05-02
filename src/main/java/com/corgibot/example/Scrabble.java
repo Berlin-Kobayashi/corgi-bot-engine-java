@@ -254,8 +254,15 @@ public class Scrabble {
         char pressed = Character.toUpperCase(keyEvent.getKeyChar());
 
         if (bench.contains(pressed)) {
-            bench.remove(bench.indexOf(pressed));
-            turn.add(new Placement(pressed, highlightedField.x, highlightedField.y));
+            if (placements.stream().noneMatch(placement -> placement.x == highlightedField.x && placement.y == highlightedField.y)) {
+                bench.remove(bench.indexOf(pressed));
+                var currentField = turn.stream().filter(placement -> placement.x == highlightedField.x && placement.y == highlightedField.y).findFirst();
+                if (currentField.isPresent()) {
+                    bench.add(currentField.get().letter);
+                    turn.remove(currentField.get());
+                }
+                turn.add(new Placement(pressed, highlightedField.x, highlightedField.y));
+            }
         }
     }
 

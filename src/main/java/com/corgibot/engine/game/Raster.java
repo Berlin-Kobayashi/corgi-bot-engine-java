@@ -84,7 +84,6 @@ public class Raster {
 
     public void drawBlock(Position position, Color color, String text, int size) {
         if (!text.isEmpty()) {
-            System.out.println(text);
 
             Position pixelPosition = getPixelPosition(position);
             int pixelSize = size * blockSize;

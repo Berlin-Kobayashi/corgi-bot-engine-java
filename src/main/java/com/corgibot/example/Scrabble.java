@@ -14,15 +14,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static java.awt.Color.*;
 
-// TODO Display Letter Scores
-// TODO Add MouseHandler
 // TODO Add BonusFields
 // TODO Display Score
 // TODO Stop when bag empty
-
-// TODO Add Bag
-// TODO Add Bank
-// TODO Add Multiplayer
+// TODO Add letter swap
 
 public class Scrabble {
     record Placement(char letter, int x, int y) {
@@ -132,6 +127,9 @@ public class Scrabble {
         Keyboard.onAnyKey(Scrabble::onAnyKey);
 
         game.onFrame(Scrabble::onFrame);
+
+        drawGrid(game);
+
         game.start();
     }
 

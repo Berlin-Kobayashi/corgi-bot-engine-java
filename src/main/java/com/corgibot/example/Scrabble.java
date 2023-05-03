@@ -245,6 +245,11 @@ public class Scrabble {
     }
 
     private static void delete() {
+        var currentField = turn.stream().filter(placement -> placement.x == highlightedField.x && placement.y == highlightedField.y).findFirst();
+        if (currentField.isPresent()) {
+            bench.add(currentField.get().letter);
+            turn.remove(currentField.get());
+        }
     }
 
     private static void onAnyKey(KeyEvent keyEvent) {

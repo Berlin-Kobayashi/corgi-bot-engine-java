@@ -4,6 +4,7 @@ import com.corgibot.engine.control.Keyboard;
 import com.corgibot.engine.game.Game;
 import com.corgibot.engine.game.GameConfig;
 import com.corgibot.engine.game.Position;
+import com.corgibot.example.scrabble.Board;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -14,9 +15,9 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static java.awt.Color.*;
 
-// TODO Add BonusFields
 // TODO Display Score
 // TODO Add letter swap
+// TODO restrict letter placement to only valid fields
 
 public class Scrabble {
     record Placement(char letter, int x, int y) {
@@ -30,13 +31,20 @@ public class Scrabble {
 
     private static final int FIELD_SIZE = 20;
 
-    private static final int GRID_SIZE = 15;
+    private static final int BOARD_SIZE = 15;
     private static final int BENCH_SIZE = 7;
 
     private static final Color gridColor = black;
     private static final Color highlightGridColor = red;
     private static final Color filledGridColor = blue;
     private static final Color backgroundColor = white;
+
+    private static final Color LETTER_DOUBLE_BONUS_COLOR = cyan;
+    private static final Color LETTER_TRIPLE_BONUS_COLOR = blue;
+
+
+    private static final Color WORD_DOUBLE_BONUS_COLOR = yellow;
+    private static final Color WORD_TRIPLE_BONUS_COLOR = red;
 
     private static final Position highlightedField = new Position(7, 7);
 
@@ -127,7 +135,7 @@ public class Scrabble {
 
         game.onFrame(Scrabble::onFrame);
 
-        drawGrid(game);
+        drawBoard(game);
 
         game.start();
     }
@@ -155,46 +163,54 @@ public class Scrabble {
     }
 
     private static void onFrame(Game game) {
-        drawGrid(game);
+        drawBoard(game);
         drawTurn(game);
         drawPlacements(game);
         drawBench(game);
 
-        drawEmptyField(game, new Position(highlightedField.x * FIELD_SIZE, highlightedField.y * FIELD_SIZE), highlightGridColor);
+        drawEmptyField(game, new Position(highlightedField.x * FIELD_SIZE, highlightedField.y * FIELD_SIZE), highlightGridColor, backgroundColor);
     }
 
-    private static void drawGrid(Game game) {
-        for (int i = 0; i < GRID_SIZE; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
-                drawField(game, (char) 0, new Position(i * FIELD_SIZE, j * FIELD_SIZE), gridColor);
+    private static void drawBoard(Game game) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
+                Color fieldBackgroundColor = backgroundColor;
+                switch (Board.bonusFields[i][j]) {
+                    case LETTER_DOUBLE_BONUS -> fieldBackgroundColor = LETTER_DOUBLE_BONUS_COLOR;
+                    case LETTER_TRIPLE_BONUS -> fieldBackgroundColor = LETTER_TRIPLE_BONUS_COLOR;
+                    case WORD_DOUBLE_BONUS -> fieldBackgroundColor = WORD_DOUBLE_BONUS_COLOR;
+                    case WORD_TRIPLE_BONUS -> fieldBackgroundColor = WORD_TRIPLE_BONUS_COLOR;
+                }
+
+                drawField(game, (char) 0, new Position(i * FIELD_SIZE, j * FIELD_SIZE), gridColor, fieldBackgroundColor);
             }
         }
     }
 
     private static void drawTurn(Game game) {
         for (Placement placement : turn) {
-            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), filledGridColor);
+            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), filledGridColor, backgroundColor);
         }
     }
 
     private static void drawPlacements(Game game) {
         for (Placement placement : placements) {
-            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), gridColor);
+            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), gridColor, backgroundColor);
         }
     }
 
     private static void drawBench(Game game) {
         for (int i = 0; i < BENCH_SIZE; i++) {
             if (bench.size() > i) {
-                drawField(game, bench.get(i), new Position((i + 4) * FIELD_SIZE, (GRID_SIZE + 2) * FIELD_SIZE), gridColor);
+                drawField(game, bench.get(i), new Position((i + 4) * FIELD_SIZE, (BOARD_SIZE + 2) * FIELD_SIZE), gridColor, backgroundColor);
             } else {
-                drawField(game, (char) 0, new Position((i + 4) * FIELD_SIZE, (GRID_SIZE + 2) * FIELD_SIZE), gridColor);
+                drawField(game, (char) 0, new Position((i + 4) * FIELD_SIZE, (BOARD_SIZE + 2) * FIELD_SIZE), gridColor, backgroundColor);
             }
         }
     }
 
-    private static void drawField(Game game, char character, Position position, Color color) {
-        drawEmptyField(game, position, color);
+    private static void drawField(Game game, char character, Position position, Color color, Color backgroundColor) {
+        drawEmptyField(game, position, color, backgroundColor);
 
         if (character != 0) {
             game.raster.drawBlock(position, gridColor, String.valueOf(character), FIELD_SIZE);
@@ -205,16 +221,16 @@ public class Scrabble {
         }
     }
 
-    private static void drawEmptyField(Game game, Position position, Color color) {
+    private static void drawEmptyField(Game game, Position position, Color color, Color backgroundColor) {
         for (int i = 0; i < FIELD_SIZE + 1; i++) {
             for (int j = 0; j < FIELD_SIZE + 1; j++) {
                 Position pixelPos = new Position(position.x + i, position.y + j);
 
+                game.raster.erase(pixelPos);
                 if (i == FIELD_SIZE || j == FIELD_SIZE || i == 0 || j == 0) {
-                    game.raster.erase(pixelPos);
                     game.raster.drawBlock(pixelPos, color);
                 } else {
-                    game.raster.erase(pixelPos);
+                    game.raster.drawBlock(pixelPos, backgroundColor);
                 }
             }
         }
@@ -227,7 +243,7 @@ public class Scrabble {
     }
 
     private static void down() {
-        if (highlightedField.y < GRID_SIZE - 1) {
+        if (highlightedField.y < BOARD_SIZE - 1) {
             highlightedField.y += 1;
         }
     }
@@ -239,7 +255,7 @@ public class Scrabble {
     }
 
     private static void right() {
-        if (highlightedField.x < GRID_SIZE - 1) {
+        if (highlightedField.x < BOARD_SIZE - 1) {
             highlightedField.x += 1;
         }
     }

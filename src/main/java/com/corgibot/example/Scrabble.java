@@ -21,6 +21,17 @@ import static java.awt.Color.*;
 
 public class Scrabble {
     record Placement(char letter, int x, int y) {
+        public int getScore() {
+
+            int letterMultiplier = 1;
+
+            switch (Board.bonusFields[x][y]) {
+                case LETTER_DOUBLE_BONUS -> letterMultiplier = 2;
+                case LETTER_TRIPLE_BONUS -> letterMultiplier = 3;
+            }
+
+            return letterScores.get(letter) * letterMultiplier;
+        }
     }
 
     private static List<Character> bench;
@@ -57,7 +68,7 @@ public class Scrabble {
             Map.entry('B', 3),
             Map.entry('C', 4),
             Map.entry('D', 1),
-            Map.entry('E', 5),
+            Map.entry('E', 1),
             Map.entry('F', 4),
             Map.entry('G', 2),
             Map.entry('H', 2),
@@ -300,9 +311,7 @@ public class Scrabble {
     private static void endTurn() {
         placements.addAll(turn);
 
-        for (Placement turnLetter : turn) {
-            score += letterScores.get(turnLetter.letter);
-        }
+        scoreTurn();
 
         turn.clear();
 
@@ -311,5 +320,20 @@ public class Scrabble {
                 bench.add(pullLetterFromBag());
             }
         }
+    }
+
+    private static void scoreTurn() {
+        int wordMultiplier = 1;
+        int wordScore = 0;
+        for (Placement turnLetter : turn) {
+            wordScore += turnLetter.getScore();
+
+            switch (Board.bonusFields[turnLetter.x][turnLetter.y]) {
+                case WORD_DOUBLE_BONUS -> wordMultiplier *= 2;
+                case WORD_TRIPLE_BONUS -> wordMultiplier *= 3;
+            }
+        }
+
+        score += wordScore * wordMultiplier;
     }
 }

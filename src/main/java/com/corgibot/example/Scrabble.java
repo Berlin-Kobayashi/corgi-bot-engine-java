@@ -34,10 +34,14 @@ public class Scrabble {
     private static final int BOARD_SIZE = 15;
     private static final int BENCH_SIZE = 7;
 
-    private static final Color gridColor = black;
-    private static final Color highlightGridColor = red;
-    private static final Color filledGridColor = blue;
-    private static final Color backgroundColor = white;
+    private static final Position SCORE_POSITION = new Position(BOARD_SIZE * FIELD_SIZE + 2 * FIELD_SIZE, 0);
+
+    private static int score = 0;
+
+    private static final Color GRID_COLOR = black;
+    private static final Color HIGHLIGHT_GRID_COLOR = red;
+    private static final Color FILLED_GRID_COLOR = blue;
+    private static final Color BACKGROUND_COLOR = white;
 
     private static final Color LETTER_DOUBLE_BONUS_COLOR = cyan;
     private static final Color LETTER_TRIPLE_BONUS_COLOR = blue;
@@ -122,8 +126,7 @@ public class Scrabble {
         bench = new LinkedList<>();
         resetBench();
 
-        Game game = new Game(new GameConfig(2, 1, backgroundColor));
-
+        Game game = new Game(new GameConfig(2, 1, BACKGROUND_COLOR));
 
         Keyboard.onKey(KeyEvent.VK_UP, Scrabble::up);
         Keyboard.onKey(KeyEvent.VK_DOWN, Scrabble::down);
@@ -167,14 +170,15 @@ public class Scrabble {
         drawTurn(game);
         drawPlacements(game);
         drawBench(game);
+        drawScore(game);
 
-        drawEmptyField(game, new Position(highlightedField.x * FIELD_SIZE, highlightedField.y * FIELD_SIZE), highlightGridColor, backgroundColor);
+        drawEmptyField(game, new Position(highlightedField.x * FIELD_SIZE, highlightedField.y * FIELD_SIZE), HIGHLIGHT_GRID_COLOR, BACKGROUND_COLOR);
     }
 
     private static void drawBoard(Game game) {
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                Color fieldBackgroundColor = backgroundColor;
+                Color fieldBackgroundColor = BACKGROUND_COLOR;
                 switch (Board.bonusFields[i][j]) {
                     case LETTER_DOUBLE_BONUS -> fieldBackgroundColor = LETTER_DOUBLE_BONUS_COLOR;
                     case LETTER_TRIPLE_BONUS -> fieldBackgroundColor = LETTER_TRIPLE_BONUS_COLOR;
@@ -182,30 +186,39 @@ public class Scrabble {
                     case WORD_TRIPLE_BONUS -> fieldBackgroundColor = WORD_TRIPLE_BONUS_COLOR;
                 }
 
-                drawField(game, (char) 0, new Position(i * FIELD_SIZE, j * FIELD_SIZE), gridColor, fieldBackgroundColor);
+                drawField(game, (char) 0, new Position(i * FIELD_SIZE, j * FIELD_SIZE), GRID_COLOR, fieldBackgroundColor);
             }
         }
     }
 
     private static void drawTurn(Game game) {
         for (Placement placement : turn) {
-            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), filledGridColor, backgroundColor);
+            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), FILLED_GRID_COLOR, BACKGROUND_COLOR);
         }
     }
 
     private static void drawPlacements(Game game) {
         for (Placement placement : placements) {
-            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), gridColor, backgroundColor);
+            drawField(game, placement.letter, new Position(placement.x * FIELD_SIZE, placement.y * FIELD_SIZE), GRID_COLOR, BACKGROUND_COLOR);
         }
     }
 
     private static void drawBench(Game game) {
         for (int i = 0; i < BENCH_SIZE; i++) {
             if (bench.size() > i) {
-                drawField(game, bench.get(i), new Position((i + 4) * FIELD_SIZE, (BOARD_SIZE + 2) * FIELD_SIZE), gridColor, backgroundColor);
+                drawField(game, bench.get(i), new Position((i + 4) * FIELD_SIZE, (BOARD_SIZE + 2) * FIELD_SIZE), GRID_COLOR, BACKGROUND_COLOR);
             } else {
-                drawField(game, (char) 0, new Position((i + 4) * FIELD_SIZE, (BOARD_SIZE + 2) * FIELD_SIZE), gridColor, backgroundColor);
+                drawField(game, (char) 0, new Position((i + 4) * FIELD_SIZE, (BOARD_SIZE + 2) * FIELD_SIZE), GRID_COLOR, BACKGROUND_COLOR);
             }
+        }
+    }
+
+    private static void drawScore(Game game) {
+        int i = 0;
+        for (char digit : String.valueOf(score).toCharArray()) {
+            drawField(game, digit, new Position(SCORE_POSITION.x + i * FIELD_SIZE, SCORE_POSITION.y), GRID_COLOR, BACKGROUND_COLOR);
+
+            i++;
         }
     }
 
@@ -213,11 +226,11 @@ public class Scrabble {
         drawEmptyField(game, position, color, backgroundColor);
 
         if (character != 0) {
-            game.raster.drawBlock(position, gridColor, String.valueOf(character), FIELD_SIZE);
+            game.raster.drawBlock(position, GRID_COLOR, String.valueOf(character), FIELD_SIZE);
         }
 
         if (letterScores.containsKey(character)) {
-            game.raster.drawBlock(position, gridColor, letterScores.get(character).toString(), 5);
+            game.raster.drawBlock(position, GRID_COLOR, letterScores.get(character).toString(), 5);
         }
     }
 
@@ -286,6 +299,11 @@ public class Scrabble {
 
     private static void endTurn() {
         placements.addAll(turn);
+
+        for (Placement turnLetter : turn) {
+            score += letterScores.get(turnLetter.letter);
+        }
+
         turn.clear();
 
         for (int i = bench.size(); i < BENCH_SIZE; i++) {

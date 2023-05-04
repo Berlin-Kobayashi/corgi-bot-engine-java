@@ -14,7 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static java.awt.Color.*;
 
-// TODO Display Score
 // TODO Add letter swap
 // TODO restrict letter placement to only valid fields
 
@@ -33,6 +32,17 @@ public class Scrabble {
 
         public int getScoreWithoutBonus() {
             return letterScores.get(letter);
+        }
+
+        public int getWordMultiplier() {
+            switch (Board.bonusFields[x][y]) {
+                case WORD_DOUBLE_BONUS:
+                    return 2;
+                case WORD_TRIPLE_BONUS:
+                    return 3;
+            }
+
+            return 1;
         }
     }
 
@@ -326,45 +336,119 @@ public class Scrabble {
     }
 
     private static void scoreTurn() {
-        int wordMultiplier = 1;
-        int wordScore = 0;
+        boolean scoredVertically = false;
+        boolean scoredHorizontally = false;
         for (Placement turnLetter : turn) {
-            wordScore += turnLetter.getScoreWithBonus();
 
-            switch (Board.bonusFields[turnLetter.x][turnLetter.y]) {
-                case WORD_DOUBLE_BONUS -> wordMultiplier *= 2;
-                case WORD_TRIPLE_BONUS -> wordMultiplier *= 3;
-            }
-        }
+            int word = turnLetter.getScoreWithBonus();
 
-        score += wordScore * wordMultiplier + getNeighboringWordsScore();
+            int wordMultiplier = turnLetter.getWordMultiplier();
 
-        if (turn.size() == BENCH_SIZE) {
-            score += BINGO_BONUS;
-        }
-    }
+            if (!scoredHorizontally) {
+                for (int i = turnLetter.x - 1; i >= 0; i--) {
+                    int finalI = i;
 
-    private static int getNeighboringWordsScore() {
-        int neighboringWordsScore = 0;
+                    Optional<Placement> neighborTurnLetter = turn.stream().filter(placement -> placement.x == finalI && placement.y == turnLetter.y).findFirst();
+                    if (neighborTurnLetter.isPresent()) {
+                        word += neighborTurnLetter.get().getScoreWithBonus();
 
-        for (Placement turnLetter : turn) {
-            for (Placement placedLetter : placements) {
-                if ((placedLetter.x == turnLetter.x + 1 && placedLetter.y == turnLetter.y) || (placedLetter.x == turnLetter.x - 1 && placedLetter.y == turnLetter.y)) {
-                    neighboringWordsScore += turnLetter.getScoreWithBonus();
-                    neighboringWordsScore += placedLetter.getScoreWithoutBonus();
+                        wordMultiplier *= neighborTurnLetter.get().getWordMultiplier();
 
-                    // TODO iterate over column
-                } else {
-                    if ((placedLetter.y == turnLetter.y + 1 && placedLetter.x == turnLetter.x) || (placedLetter.y == turnLetter.y - 1 && placedLetter.x == turnLetter.x)) {
-                        neighboringWordsScore += turnLetter.getScoreWithBonus();
-                        neighboringWordsScore += placedLetter.getScoreWithoutBonus();
-
-                        // TODO iterate over row
+                        scoredHorizontally = true;
                     }
+
+
+                    Optional<Placement> neighborPlacement = placements.stream().filter(placement -> placement.x == finalI && placement.y == turnLetter.y).findFirst();
+                    if (neighborPlacement.isEmpty() && neighborTurnLetter.isEmpty()) {
+                        break;
+                    }
+
+                    if (neighborPlacement.isPresent()) {
+                        word += neighborPlacement.get().getScoreWithoutBonus();
+                    }
+                }
+
+                for (int i = turnLetter.x + 1; i < BOARD_SIZE; i++) {
+                    int finalI = i;
+
+                    Optional<Placement> neighborTurnLetter = turn.stream().filter(placement -> placement.x == finalI && placement.y == turnLetter.y).findFirst();
+                    if (neighborTurnLetter.isPresent()) {
+                        word += neighborTurnLetter.get().getScoreWithBonus();
+
+                        wordMultiplier *= neighborTurnLetter.get().getWordMultiplier();
+
+                        scoredHorizontally = true;
+                    }
+
+
+                    Optional<Placement> neighborPlacement = placements.stream().filter(placement -> placement.x == finalI && placement.y == turnLetter.y).findFirst();
+                    if (neighborPlacement.isEmpty() && neighborTurnLetter.isEmpty()) {
+                        break;
+                    }
+
+                    if (neighborPlacement.isPresent()) {
+                        word += neighborPlacement.get().getScoreWithoutBonus();
+                    }
+                }
+
+                if (word > turnLetter.getScoreWithBonus()) {
+                    score += word * wordMultiplier;
+                }
+
+                word = turnLetter.getScoreWithBonus();
+                wordMultiplier = turnLetter.getWordMultiplier();
+            }
+
+            if (!scoredVertically) {
+                for (int i = turnLetter.y - 1; i >= 0; i--) {
+                    int finalI = i;
+
+                    Optional<Placement> neighborTurnLetter = turn.stream().filter(placement -> placement.y == finalI && placement.x == turnLetter.x).findFirst();
+                    if (neighborTurnLetter.isPresent()) {
+                        word += neighborTurnLetter.get().getScoreWithBonus();
+
+                        wordMultiplier *= neighborTurnLetter.get().getWordMultiplier();
+
+                        scoredVertically = true;
+                    }
+
+                    Optional<Placement> neighborPlacement = placements.stream().filter(placement -> placement.y == finalI && placement.x == turnLetter.x).findFirst();
+                    if (neighborPlacement.isEmpty() && neighborTurnLetter.isEmpty()) {
+                        break;
+                    }
+
+                    if (neighborPlacement.isPresent()) {
+                        word += neighborPlacement.get().getScoreWithoutBonus();
+                    }
+                }
+
+                for (int i = turnLetter.y + 1; i < BOARD_SIZE; i++) {
+                    int finalI = i;
+
+                    Optional<Placement> neighborTurnLetter = turn.stream().filter(placement -> placement.y == finalI && placement.x == turnLetter.x).findFirst();
+                    if (neighborTurnLetter.isPresent()) {
+                        word += neighborTurnLetter.get().getScoreWithBonus();
+
+                        wordMultiplier *= neighborTurnLetter.get().getWordMultiplier();
+
+                        scoredVertically = true;
+                    }
+
+
+                    Optional<Placement> neighborPlacement = placements.stream().filter(placement -> placement.y == finalI && placement.x == turnLetter.x).findFirst();
+                    if (neighborPlacement.isEmpty() && neighborTurnLetter.isEmpty()) {
+                        break;
+                    }
+
+                    if (neighborPlacement.isPresent()) {
+                        word += neighborPlacement.get().getScoreWithoutBonus();
+                    }
+                }
+
+                if (word > turnLetter.getScoreWithBonus()) {
+                    score += word * wordMultiplier;
                 }
             }
         }
-
-        return neighboringWordsScore;
     }
 }

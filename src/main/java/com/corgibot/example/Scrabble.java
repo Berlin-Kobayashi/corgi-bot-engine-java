@@ -8,9 +8,8 @@ import com.corgibot.example.scrabble.Board;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.awt.Color.*;
@@ -21,8 +20,7 @@ import static java.awt.Color.*;
 
 public class Scrabble {
     record Placement(char letter, int x, int y) {
-        public int getScore() {
-
+        public int getScoreWithBonus() {
             int letterMultiplier = 1;
 
             switch (Board.bonusFields[x][y]) {
@@ -30,7 +28,11 @@ public class Scrabble {
                 case LETTER_TRIPLE_BONUS -> letterMultiplier = 3;
             }
 
-            return letterScores.get(letter) * letterMultiplier;
+            return getScoreWithoutBonus() * letterMultiplier;
+        }
+
+        public int getScoreWithoutBonus() {
+            return letterScores.get(letter);
         }
     }
 
@@ -309,9 +311,9 @@ public class Scrabble {
     }
 
     private static void endTurn() {
-        placements.addAll(turn);
-
         scoreTurn();
+
+        placements.addAll(turn);
 
         turn.clear();
 
@@ -326,7 +328,7 @@ public class Scrabble {
         int wordMultiplier = 1;
         int wordScore = 0;
         for (Placement turnLetter : turn) {
-            wordScore += turnLetter.getScore();
+            wordScore += turnLetter.getScoreWithBonus();
 
             switch (Board.bonusFields[turnLetter.x][turnLetter.y]) {
                 case WORD_DOUBLE_BONUS -> wordMultiplier *= 2;
@@ -334,6 +336,30 @@ public class Scrabble {
             }
         }
 
-        score += wordScore * wordMultiplier;
+        score += wordScore * wordMultiplier + getNeighboringWordsScore();
+    }
+
+    private static int getNeighboringWordsScore() {
+        int neighboringWordsScore = 0;
+
+        for (Placement turnLetter : turn) {
+            for (Placement placedLetter : placements) {
+                if ((placedLetter.x == turnLetter.x + 1 && placedLetter.y == turnLetter.y) || (placedLetter.x == turnLetter.x - 1 && placedLetter.y == turnLetter.y)) {
+                    neighboringWordsScore += turnLetter.getScoreWithBonus();
+                    neighboringWordsScore += placedLetter.getScoreWithoutBonus();
+
+                    // TODO iterate over column
+                } else {
+                    if ((placedLetter.y == turnLetter.y + 1 && placedLetter.x == turnLetter.x) || (placedLetter.y == turnLetter.y - 1 && placedLetter.x == turnLetter.x)) {
+                        neighboringWordsScore += turnLetter.getScoreWithBonus();
+                        neighboringWordsScore += placedLetter.getScoreWithoutBonus();
+
+                        // TODO iterate over row
+                    }
+                }
+            }
+        }
+
+        return neighboringWordsScore;
     }
 }

@@ -46,6 +46,7 @@ public class Scrabble {
 
     private static final int BOARD_SIZE = 15;
     private static final int BENCH_SIZE = 7;
+    private static final int BINGO_BONUS = 50;
 
     private static final Position SCORE_POSITION = new Position(BOARD_SIZE * FIELD_SIZE + 2 * FIELD_SIZE, 0);
 
@@ -337,6 +338,10 @@ public class Scrabble {
         }
 
         score += wordScore * wordMultiplier + getNeighboringWordsScore();
+
+        if (turn.size() == BENCH_SIZE) {
+            score += BINGO_BONUS;
+        }
     }
 
     private static int getNeighboringWordsScore() {
